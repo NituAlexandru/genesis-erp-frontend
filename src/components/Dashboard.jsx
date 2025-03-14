@@ -1,0 +1,26 @@
+import useAuth from "@/hooks/useAuth";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import Layout from "@/components/Layout";
+
+export default function Dashboard() {
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/auth/login");
+    }
+  }, [isAuthenticated, router]);
+
+  if (!isAuthenticated) {
+    return null; // sau un loading spinner
+  }
+
+  return (
+    <Layout>
+      <h1 className="text-2xl font-bold">Bine ai venit în Dashboard!</h1>
+      {/* conținutul pentru Dashboard */}
+    </Layout>
+  );
+}
