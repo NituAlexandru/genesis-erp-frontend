@@ -9,21 +9,24 @@ const AuthContext = createContext({
   logout: () => {},
   isAuthenticated: false,
 });
+
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null); //{username, role}
+  const [user, setUser] = useState(null); // {username, role}
   const [token, setToken] = useState(null); // token JWT
 
   const login = useCallback((userData, tokenValue) => {
+    console.log("AuthContext.login called with:", userData, tokenValue);
     setUser(userData);
     setToken(tokenValue);
   }, []);
 
   const logout = useCallback(() => {
+    console.log("AuthContext.logout called");
     setUser(null);
     setToken(null);
   }, []);
 
-  const isAuthenticated = !!token;
+  const isAuthenticated = Boolean(user);
 
   const value = {
     user,
@@ -32,6 +35,8 @@ export function AuthProvider({ children }) {
     logout,
     isAuthenticated,
   };
+
+  console.log("AuthContext value:", value);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
