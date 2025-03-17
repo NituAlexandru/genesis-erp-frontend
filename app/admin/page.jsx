@@ -1,28 +1,37 @@
-import useAuth from "@/hooks/useAuth";
-import { useRouter } from "next/router";
+"use client";
+
 import { useEffect } from "react";
-import Layout from "@/components/Layout";
+import { useRouter } from "next/navigation"; // corect pentru App Router
+import useAuth from "@/hooks/useAuth";
+import Loader from "@/components/Loader";
 
 export default function AdminPage() {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== "Administrator") {
-      // Dacă nu e logat sau nu e Administrator, redirect la /dashboard
-      router.push("/dashboard");
+    // După ce loading e false, dacă userul nu e autentificat sau nu are rolul potrivit, redirecționează
+    if (
+      !loading &&
+      (!isAuthenticated || !["Admin", "Administrator"].includes(user?.role))
+    ) {
+      router.push("/no-access");
     }
-  }, [isAuthenticated, user, router]);
+  }, [isAuthenticated, user, loading, router]);
 
-  if (!isAuthenticated || user?.role !== "Administrator") {
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (!isAuthenticated || !["Admin", "Administrator"].includes(user?.role)) {
     return null;
   }
 
   return (
-    <Layout>
-      <h1 className="text-2xl font-bold">Panou de Administrare</h1>
-      <p>Aici poți gestiona utilizatorii și rolurile.</p>
-      {/* un buton "Creează utilizator nou" */}
-    </Layout>
+    <div style={{ padding: 20 }}>
+      <h1>Admin Panel</h1>
+      <p>Gestionați utilizatorii și rolurile.</p>
+      {/* Aici adaugi legături către sub-pagini: /admin/users, /admin/roles, etc. */}
+    </div>
   );
 }

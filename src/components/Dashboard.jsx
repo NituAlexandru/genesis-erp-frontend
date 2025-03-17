@@ -7,11 +7,15 @@ export default function Dashboard() {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
 
+ 
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/auth/login");
+    } else {
+      // Verifică permisiunile
+      // Daca userul nu are "VIEW_ALL_PAGES", redirecționează
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, user, router]);
 
   if (!isAuthenticated) {
     return null; // sau un loading spinner

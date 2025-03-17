@@ -17,7 +17,12 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   const login = useCallback((userData, tokenValue) => {
-    console.log("AuthContext.login called with:", userData, tokenValue);
+    console.log(
+      "AuthContext.login called with:",
+      userData,
+      "Token Value is:",
+      tokenValue
+    );
     setUser(userData);
     setToken(tokenValue);
     setLoading(false);
@@ -41,7 +46,7 @@ export function AuthProvider({ children }) {
     isAuthenticated,
   };
 
-  console.log("AuthContext value:", value);
+  console.log("Value:", value);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

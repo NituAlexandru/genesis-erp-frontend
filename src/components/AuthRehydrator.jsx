@@ -17,9 +17,17 @@ export default function AuthRehydrator({ children }) {
         });
         console.log("Fetched user data:", res.data);
         // Decodăm direct datele din token (rolul este deja numele rolului)
-        login({ username: res.data.username, role: res.data.role }, null);
+        login(
+          {
+            username: res.data.username,
+            role: res.data.role,
+            permissions: res.data.permissions,
+          },
+          null
+        );
       } catch (error) {
         console.error("Error fetching user:", error);
+        login(null, null);
       }
     }
     fetchUser();

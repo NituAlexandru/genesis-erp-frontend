@@ -1,21 +1,33 @@
-import { useState } from "react";
-import { useRouter } from "next/router";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import api from "@/services/api";
 import useAuth from "@/hooks/useAuth";
-import Layout from "@/components/Layout";
 
 export default function CreateUserPage() {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
   const router = useRouter();
   const [formData, setFormData] = useState({
     username: "",
     name: "",
     email: "",
     password: "",
-    role: "Agent Vânzări",
+    role: "Agent Vânzări", // Default, dar poate fi selectat și alt rol, în funcție de permisiuni
   });
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+
+  useEffect(() => {
+    if (
+      !loading &&
+      (!isAuthenticated ||
+        !user ||
+        !["Admin", "Administrator"].includes(user.role))
+    ) {
+      router.push("/no-access");
+    }
+  }, [isAuthenticated, user, loading, router]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -33,9 +45,9 @@ export default function CreateUserPage() {
     }
   };
 
-  if (!isAuthenticated || user?.role !== "Administrator") {
-    router.push("/dashboard");
-    return null;
+  // Dacă încă se rehidratează sau userul nu e autorizat, afișează loader sau returnează null
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (
