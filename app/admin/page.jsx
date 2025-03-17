@@ -6,6 +6,7 @@ import useAuth from "@/hooks/useAuth";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
 import Loader from "@/components/Loader";
 import { createUser } from "@/services/userService";
+import LogoutButton from "@/components/LogoutButton/LogoutButton.jsx";
 
 export default function AdminPage() {
   const { user, isAuthenticated, loading } = useAuth();
@@ -55,6 +56,12 @@ export default function AdminPage() {
     }
   };
 
+  const handleLogout = async (e) => {
+    e.preventDefault();
+    logout();
+    router.push("/auth/login");
+  };
+
   return (
     <div style={{ padding: 20 }}>
       <h1>Admin Panel</h1>
@@ -71,6 +78,7 @@ export default function AdminPage() {
           onSubmit={handleUserSubmit}
         />
       )}
+      <LogoutButton onClick={handleLogout}></LogoutButton>
     </div>
   );
 }
