@@ -4,15 +4,17 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
+import EditUserModal from "@/components/Modals/EditUserModal";
+import DeleteUserModal from "@/components/Modals/DeleteUserModal";
 import Loader from "@/components/Loader";
-import { createUser } from "@/services/userService";
-import LogoutButton from "@/components/LogoutButton/LogoutButton.jsx";
 import NavBar from "@/components/Navbar/Navbar";
 
 export default function AdminPage() {
   const { user, isAuthenticated, loading } = useAuth();
   const router = useRouter();
-  const [modalOpen, setModalOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
 
@@ -32,29 +34,17 @@ export default function AdminPage() {
     return null;
   }
 
-  const handleOpenModal = () => setModalOpen(true);
-  const handleCloseModal = () => setModalOpen(false);
+  const handleOpenCreateModal = () => setCreateModalOpen(true);
+  const handleCloseCreateModal = () => setCreateModalOpen(false);
+  const handleOpenEditModal = () => setEditModalOpen(true);
+  const handleCloseEditModal = () => setEditModalOpen(false);
+  const handleOpenDeleteModal = () => setDeleteModalOpen(true);
+  const handleCloseDeleteModal = () => setDeleteModalOpen(false);
 
-  const handleUserSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
-    setSuccess(null);
-
-    // Extragem datele din formular cu FormData
-    const form = e.target;
-    const formData = new FormData(form);
-    const data = {};
-    formData.forEach((value, key) => {
-      data[key] = value;
-    });
-
-    try {
-      await createUser(data);
-      setSuccess("Utilizator creat cu succes!");
-      handleCloseModal();
-    } catch (err) {
-      setError(err.response?.data?.msg || "Eroare la crearea utilizatorului");
-    }
+  // Această funcție poate fi transmisă modalelor de editare și ștergere pentru a afișa mesaje de succes,
+  // dacă dorești să le gestionezi la nivel de pagină.
+  const handleModalSuccess = (message) => {
+    setSuccess(message);
   };
 
   return (
@@ -64,14 +54,44 @@ export default function AdminPage() {
       <p>Gestionați utilizatorii și rolurile.</p>
       {error && <p className="text-red-500">{error}</p>}
       {success && <p className="text-green-500">{success}</p>}
-      <button onClick={handleOpenModal} className="bg-blue-500 text-white p-2">
-        Crează Utilizator
-      </button>
-      {modalOpen && (
+      <div className="flex gap-2">
+        <button
+          onClick={handleOpenCreateModal}
+          className="bg-blue-500 text-white p-2"
+        >
+          Crează Utilizator
+        </button>
+        <button
+          onClick={handleOpenEditModal}
+          className="bg-green-500 text-white p-2"
+        >
+          Modifică Utilizator
+        </button>
+        <button
+          onClick={handleOpenDeleteModal}
+          className="bg-red-500 text-white p-2"
+        >
+          Șterge Utilizator
+        </button>
+      </div>
+      {createModalOpen && (
         <CreateUserModal
-          isOpen={modalOpen}
-          onClose={handleCloseModal}
-          onSubmit={handleUserSubmit}
+          isOpen={createModalOpen}
+          onClose={handleCloseCreateModal}
+        />
+      )}
+      {editModalOpen && (
+        <EditUserModal
+          isOpen={editModalOpen}
+          onClose={handleCloseEditModal}
+          onSuccess={handleModalSuccess}
+        />
+      )}
+      {deleteModalOpen && (
+        <DeleteUserModal
+          isOpen={deleteModalOpen}
+          onClose={handleCloseDeleteModal}
+          onSuccess={handleModalSuccess}
         />
       )}
     </div>

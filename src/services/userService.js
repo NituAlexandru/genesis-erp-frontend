@@ -11,5 +11,19 @@ export const createUser = async (userData) => {
   return res.data;
 };
 
-// Alte funcții: getUser, updateUser, deleteUser.
-export default { createUser };
+export const getUserByUsername = async (username) => {
+  const res = await api.get(`/api/users/username/${username}`);
+  return res.data;
+};
+
+export const updateUser = async (userId, updatedData) => {
+  const res = await api.put(`/api/users/${userId}`, updatedData);
+  return res.data;
+};
+
+export const deleteUser = async (userId) => {
+  const res = await api.delete(`/api/users/${userId}`);
+  return res.data;
+};
+
+export default { createUser, getUserByUsername, updateUser, deleteUser };
