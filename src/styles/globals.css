@@ -1,0 +1,34 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --toggle-bg: #133cad;
+}
+
+/* Tema Light */
+html[data-theme="light"] {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+}
+
+/* Tema Dark */
+html[data-theme="dark"] {
+  --bg-color: #181818;
+  --text-color: #fcfcfc;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

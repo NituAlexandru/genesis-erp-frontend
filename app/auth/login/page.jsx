@@ -18,11 +18,11 @@ export default function LoginPage() {
     return <Loader />;
   }
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push("/dashboard");
-    }
-  }, [isAuthenticated, router]);
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     router.push("/dashboard");
+  //   }
+  // }, [isAuthenticated, router]);
 
   async function handleLogin(e) {
     e.preventDefault();

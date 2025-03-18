@@ -14,6 +14,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <AuthRehydrator>{children}</AuthRehydrator>
         </AuthProvider>
+
         <div id="modal-root"></div>
       </body>
     </html>
