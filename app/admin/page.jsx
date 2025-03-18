@@ -7,6 +7,7 @@ import CreateUserModal from "@/components/Modals/CreateUserModal";
 import Loader from "@/components/Loader";
 import { createUser } from "@/services/userService";
 import LogoutButton from "@/components/LogoutButton/LogoutButton.jsx";
+import NavBar from "@/components/Navbar/Navbar";
 
 export default function AdminPage() {
   const { user, isAuthenticated, loading } = useAuth();
@@ -56,14 +57,9 @@ export default function AdminPage() {
     }
   };
 
-  const handleLogout = async (e) => {
-    e.preventDefault();
-    logout();
-    router.push("/auth/login");
-  };
-
   return (
-    <div style={{ padding: 20 }}>
+    <div>
+      <NavBar />
       <h1>Admin Panel</h1>
       <p>Gestionați utilizatorii și rolurile.</p>
       {error && <p className="text-red-500">{error}</p>}
@@ -78,7 +74,6 @@ export default function AdminPage() {
           onSubmit={handleUserSubmit}
         />
       )}
-      <LogoutButton onClick={handleLogout}></LogoutButton>
     </div>
   );
 }
