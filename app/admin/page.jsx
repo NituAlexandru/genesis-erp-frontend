@@ -7,7 +7,6 @@ import CreateUserModal from "@/components/Modals/CreateUserModal";
 import EditUserModal from "@/components/Modals/EditUserModal";
 import DeleteUserModal from "@/components/Modals/DeleteUserModal";
 import Loader from "@/components/Loader";
-import NavBar from "@/components/Navbar/Navbar";
 
 export default function AdminPage() {
   const { user, isAuthenticated, loading } = useAuth();
@@ -41,15 +40,13 @@ export default function AdminPage() {
   const handleOpenDeleteModal = () => setDeleteModalOpen(true);
   const handleCloseDeleteModal = () => setDeleteModalOpen(false);
 
-  // Această funcție poate fi transmisă modalelor de editare și ștergere pentru a afișa mesaje de succes,
-  // dacă dorești să le gestionezi la nivel de pagină.
+
   const handleModalSuccess = (message) => {
     setSuccess(message);
   };
 
   return (
     <div>
-      <NavBar />
       <h1>Admin Panel</h1>
       <p>Gestionați utilizatorii și rolurile.</p>
       {error && <p className="text-red-500">{error}</p>}

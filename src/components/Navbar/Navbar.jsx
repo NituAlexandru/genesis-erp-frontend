@@ -53,7 +53,11 @@ export default function NavBar() {
 
         <div className={styles.userContainer} onClick={handleUserClick}>
           <span className={styles.welcome}>
-            Bine ai venit, {user?.username || "Utilizator"}
+            {user?.username ? (
+              <span>Bine ai venit, {user.username}</span>
+            ) : (
+              <span></span>
+            )}
           </span>
           <UserDropdown
             isOpen={isDropdownOpen}

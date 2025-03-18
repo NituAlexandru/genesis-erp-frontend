@@ -4,8 +4,6 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
 import Loader from "@/components/Loader";
-import LogoutButton from "@/components/LogoutButton/LogoutButton";
-import NavBar from "@/components/Navbar/Navbar";
 
 export default function DashboardPage() {
   const { isAuthenticated, loading } = useAuth();
@@ -23,7 +21,6 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <NavBar />
       <h1>Dashboard</h1>
       <p>Aici este conținutul dashboardului</p>
     </div>
