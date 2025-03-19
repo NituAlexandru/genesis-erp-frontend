@@ -19,8 +19,8 @@ const menuConfig = [
     path: "/warehouse",
     subItems: [
       { title: "Stocuri", path: "/warehouse/stocks" },
-      { title: "Produse în tranzit", path: "/warehouse/in-transit" },
       { title: "Comenzi în așteptare", path: "/warehouse/pending-orders" },
+      { title: "Produse în tranzit", path: "/warehouse/in-transit" },
     ],
   },
   {
