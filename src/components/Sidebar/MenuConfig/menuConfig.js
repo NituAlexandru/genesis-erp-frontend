@@ -25,7 +25,7 @@ const menuConfig = [
   },
   {
     title: "Catalog Produse",
-    path: "/catalog",
+    path: "/products",
     subItems: [], // Catalog detaliat de produse
   },
   //   {
@@ -37,10 +37,10 @@ const menuConfig = [
     title: "Documente",
     path: "/documents",
     subItems: [
-      { title: "Receptie", path: "/documents/receptie" },
-      { title: "Comandă", path: "/documents/comanda" },
-      { title: "Livrare", path: "/documents/livrare" },
-      { title: "Retururi", path: "/documents/retururi" },
+      { title: "Receptie", path: "/documents/reception" },
+      { title: "Comandă", path: "/documents/order" },
+      { title: "Livrare", path: "/documents/delivery" },
+      { title: "Retururi", path: "/documents/returns" },
     ],
   },
   {
