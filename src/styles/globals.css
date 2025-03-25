@@ -13,22 +13,18 @@ body {
   --bg-color: #ffffff;
   --text-color: #000000;
   --toggle-bg: #133cad;
-}
-
-/* Tema Light */
-html[data-theme="light"] {
-  --bg-color: #ffffff;
-  --text-color: #000000;
-}
-
-/* Tema Dark */
-html[data-theme="dark"] {
-  --bg-color: #181818;
-  --text-color: #fcfcfc;
+  --brand-red: #cc0000;
+  --brand-black: #000000;
+  --brand-gray: #666666;
 }
 
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
+  font-family: Arial, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.button {
+  border-radius: 5px;
 }

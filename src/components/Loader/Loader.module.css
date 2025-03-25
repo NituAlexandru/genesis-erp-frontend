@@ -1,0 +1,24 @@
+/* Loader.module.css */
+
+.loaderContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* Spinner circular */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 6px solid #eee; /* Culoare de fundal pentru inel */
+  border-top-color: #cc0000; /* Culoare "brand" pentru partea superioară */
+  border-radius: 50%;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

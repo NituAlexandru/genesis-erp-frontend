@@ -1,0 +1,58 @@
+/* LoginPage.module.css */
+
+.container {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--brand-black);
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.input {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.error {
+  margin: 0;
+  color: var(--brand-red);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.button {
+  background-color: var(--brand-red);
+  color: #fff;
+  padding: 10px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.button:hover {
+  opacity: 0.9;
+}

@@ -1,0 +1,56 @@
+.container {
+  padding: 20px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.title {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: var(--brand-black);
+}
+
+.description {
+  margin-bottom: 20px;
+  color: var(--brand-gray);
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* Stiluri butoane */
+.createButton {
+  background-color: green;
+  color: #fff;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.editButton {
+  background-color: blue;
+  color: #fff;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.deleteButton {
+  background-color: red;
+  color: #fff;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.createButton:hover,
+.editButton:hover,
+.deleteButton:hover {
+  opacity: 0.9;
+}

@@ -6,16 +6,17 @@ import useAuth from "@/hooks/useAuth";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
 import EditUserModal from "@/components/Modals/EditUserModal";
 import DeleteUserModal from "@/components/Modals/DeleteUserModal";
-import Loader from "@/components/Loader";
+import Loader from "@/components/Loader/Loader";
+import Notiflix from "notiflix";
+import styles from "./AdminPage.module.css";
 
 export default function AdminPage() {
   const { user, isAuthenticated, loading } = useAuth();
   const router = useRouter();
+
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [success, setSuccess] = useState(null);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (
@@ -40,34 +41,22 @@ export default function AdminPage() {
   const handleOpenDeleteModal = () => setDeleteModalOpen(true);
   const handleCloseDeleteModal = () => setDeleteModalOpen(false);
 
-
   const handleModalSuccess = (message) => {
-    setSuccess(message);
+    Notiflix.Notify.success(message);
   };
 
   return (
-    <div>
-      <h1>Admin Panel</h1>
-      <p>Gestionați utilizatorii și rolurile.</p>
-      {error && <p className="text-red-500">{error}</p>}
-      {success && <p className="text-green-500">{success}</p>}
-      <div className="flex gap-2">
-        <button
-          onClick={handleOpenCreateModal}
-          className="bg-blue-500 text-white p-2"
-        >
+    <div className={styles.container}>
+      <h1 className={styles.title}>Panou Admin</h1>
+      <p className={styles.description}>Gestionați utilizatorii și rolurile.</p>
+      <div className={styles.buttonGroup}>
+        <button onClick={handleOpenCreateModal} className={styles.createButton}>
           Crează Utilizator
         </button>
-        <button
-          onClick={handleOpenEditModal}
-          className="bg-green-500 text-white p-2"
-        >
+        <button onClick={handleOpenEditModal} className={styles.editButton}>
           Modifică Utilizator
         </button>
-        <button
-          onClick={handleOpenDeleteModal}
-          className="bg-red-500 text-white p-2"
-        >
+        <button onClick={handleOpenDeleteModal} className={styles.deleteButton}>
           Șterge Utilizator
         </button>
       </div>

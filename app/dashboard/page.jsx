@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
-import Loader from "@/components/Loader";
+import Loader from "@/components/Loader/Loader.jsx";
 
 export default function DashboardPage() {
   const { isAuthenticated, loading } = useAuth();

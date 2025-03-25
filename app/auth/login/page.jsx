@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
 import axios from "axios";
-import Loader from "@/components/Loader";
+import Loader from "@/components/Loader/Loader";
+import Notiflix from "notiflix";
+import styles from "./LoginPage.module.css";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,7 +14,6 @@ export default function LoginPage() {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
 
   if (loading) {
     return <Loader />;
@@ -20,7 +21,6 @@ export default function LoginPage() {
 
   async function handleLogin(e) {
     e.preventDefault();
-    setError(null);
 
     try {
       const res = await axios.post(
@@ -35,33 +35,42 @@ export default function LoginPage() {
       );
       router.push("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.msg || "Login failed");
+      const errorMessage = err.response?.data?.msg || "Login failed";
+      Notiflix.Notify.failure(errorMessage);
     }
   }
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Autentificare</h1>
-      <form
-        onSubmit={handleLogin}
-        style={{ display: "flex", flexDirection: "column", gap: 8 }}
-      >
+    <div className={styles.container}>
+      <h3 className={styles.title}>Autentificare</h3>
+      <form onSubmit={handleLogin} className={styles.form}>
+        <label className={styles.label} htmlFor="username">
+          Nume utilizator
+        </label>
         <input
+          id="username"
+          className={styles.input}
           type="text"
           placeholder="Nume utilizator"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
         />
+        <label className={styles.label} htmlFor="password">
+          Parola
+        </label>
         <input
+          id="password"
+          className={styles.input}
           type="password"
           placeholder="Parola"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit">Conectează-te</button>
+        <button type="submit" className={styles.button}>
+          Conectează-te
+        </button>
       </form>
     </div>
   );
