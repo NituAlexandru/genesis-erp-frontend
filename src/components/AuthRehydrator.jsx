@@ -5,9 +5,12 @@ import axios from "axios";
 import useAuth from "@/hooks/useAuth";
 
 export default function AuthRehydrator({ children }) {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
 
   useEffect(() => {
+    // Dacă avem deja user, nu rehidrata
+    if (user) return;
+
     const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
     async function fetchUser() {
@@ -16,7 +19,6 @@ export default function AuthRehydrator({ children }) {
           withCredentials: true,
         });
         console.log("Fetched user data:", res.data);
-        // Decodăm direct datele din token (rolul este deja numele rolului)
         login(
           {
             username: res.data.username,
@@ -27,11 +29,12 @@ export default function AuthRehydrator({ children }) {
         );
       } catch (error) {
         console.error("Error fetching user:", error);
+        // Dacă nu reușești să recuperezi userul, apelezi login cu null
         login(null, null);
       }
     }
     fetchUser();
-  }, [login]);
+  }, [login, user]);
 
   return children;
 }

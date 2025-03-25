@@ -9,16 +9,8 @@ export const metadata = {
 
 export default function AuthLayout({ children }) {
   return (
-    <html lang="ro">
-      <body>
-        <AuthProvider>
-          <AuthRehydrator>
-            {/* Aici NU avem Sidebar, NU avem Navbar */}
-            {children}
-          </AuthRehydrator>
-        </AuthProvider>
-        <div id="modal-root"></div>
-      </body>
-    </html>
+    <AuthProvider>
+      <AuthRehydrator>{children}</AuthRehydrator>
+    </AuthProvider>
   );
 }

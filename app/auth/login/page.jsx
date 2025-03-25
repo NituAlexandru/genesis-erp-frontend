@@ -8,7 +8,7 @@ import Loader from "@/components/Loader";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { isAuthenticated, login, loading } = useAuth();
+  const { login, loading } = useAuth();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -17,12 +17,6 @@ export default function LoginPage() {
   if (loading) {
     return <Loader />;
   }
-
-  // useEffect(() => {
-  //   if (isAuthenticated) {
-  //     router.push("/dashboard");
-  //   }
-  // }, [isAuthenticated, router]);
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -34,7 +28,7 @@ export default function LoginPage() {
         { username, password },
         { withCredentials: true }
       );
-      // Răspunsul conține { token, role, permissions }
+
       login(
         { username, role: res.data.role, permissions: res.data.permissions },
         res.data.token
