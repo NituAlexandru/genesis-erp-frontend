@@ -4,13 +4,12 @@
   justify-content: space-between;
   background-color: var(--bg-color);
   color: var(--text-color);
-  padding: 0.5rem 1rem;
+  padding: 0 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.2s, color 0.2s;
 }
 
 .logo {
-  font-weight: bold;
   cursor: pointer;
 }
 
@@ -65,19 +64,12 @@
   display: block;
 }
 
-/* Fiecare item din drop-down */
-.dropdownItem {
-  color: #000;
-  padding: 0.5rem 1rem;
-}
-
 .dropdownItem:hover {
   background: #f0f0f0;
 }
 
 .logoutButton {
   background: transparent;
-
   border: none;
   padding: 0;
   cursor: pointer;

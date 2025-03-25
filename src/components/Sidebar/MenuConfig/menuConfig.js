@@ -45,11 +45,11 @@ const menuConfig = [
   },
   {
     title: "Rapoarte",
-    path: "/rapoarte",
+    path: "/reports",
     subItems: [
-      { title: "Vânzări", path: "/rapoarte/vanzari" },
-      { title: "Încasări", path: "/rapoarte/incasari" },
-      { title: "Profit", path: "/rapoarte/profit" },
+      { title: "Vânzări", path: "/reports/sales" },
+      { title: "Încasări", path: "/reports/collections" },
+      { title: "Profit", path: "/reports/profit" },
     ],
   },
   {

@@ -1,3 +1,3 @@
 export default function CollectionsPage() {
-  return <h1>Incasari</h1>;
+  return <h2>Incasari</h2>;
 }

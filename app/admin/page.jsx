@@ -47,7 +47,7 @@ export default function AdminPage() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Panou Admin</h1>
+      <h2 className={styles.title}>Panou Admin</h2>
       <p className={styles.description}>Gestionați utilizatorii și rolurile.</p>
       <div className={styles.buttonGroup}>
         <button onClick={handleOpenCreateModal} className={styles.createButton}>

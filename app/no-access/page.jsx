@@ -12,7 +12,7 @@ export default function NoAccessPage() {
 
   return (
     <div>
-      <h1>Acces Interzis</h1>
+      <h2>Acces Interzis</h2>
       <p>Nu aveți permisiunea necesară pentru a accesa această pagină.</p>
       <button onClick={handleRedirect}>Mergi la Dashboard</button>
     </div>

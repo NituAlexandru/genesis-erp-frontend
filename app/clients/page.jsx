@@ -1,3 +1,3 @@
 export default function ClientiPage() {
-  return <h1>Clienți</h1>;
+  return <h2>Clienți</h2>;
 }

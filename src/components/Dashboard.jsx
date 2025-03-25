@@ -7,7 +7,6 @@ export default function Dashboard() {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
 
- 
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/auth/login");
@@ -23,7 +22,7 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-bold">Bine ai venit în Dashboard!</h1>
+      <h2 className="text-2xl font-bold">Bine ai venit în Dashboard!</h2>
       {/* conținutul pentru Dashboard */}
     </Layout>
   );

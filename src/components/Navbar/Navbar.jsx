@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
@@ -12,7 +13,6 @@ export default function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
 
-  // Activează / dezactivează Dark Mode
   useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add("dark");
@@ -25,26 +25,29 @@ export default function NavBar() {
     setIsDarkMode((prev) => !prev);
   };
 
-  // Apelăm stopPropagation ca să nu declanșăm evenimentul global
   const handleUserClick = (e) => {
     e.stopPropagation();
     setIsDropdownOpen((prev) => !prev);
   };
 
   const handleProfileClick = () => {
-    // Poți redirecționa către pagina de profil, ex:
-    // router.push("/profil")
     setIsDropdownOpen(false);
   };
 
-  // Funcție de închidere folosită de dropdown când se face click în afara lui
   const handleCloseDropdown = () => {
     setIsDropdownOpen(false);
   };
 
   return (
     <nav className={styles.navbar}>
-      <div className={styles.logo}>LOGO</div>
+      <div className={styles.logo}>
+        <Image
+          src="/images/image.webp"
+          alt="Genesis ERP"
+          width={150}
+          height={50}
+        />
+      </div>
 
       <div className={styles.actions}>
         <button className={styles.toggleButton} onClick={handleToggleMode}>
