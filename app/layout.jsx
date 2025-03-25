@@ -1,8 +1,11 @@
+import React, { Suspense } from "react";
 import "../src/styles/globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import AuthRehydrator from "../src/components/AuthRehydrator";
 import NavBar from "@/components/Navbar/Navbar";
 import Sidebar from "@/components/Sidebar/Sidebar";
+import Loader from "@/components/Loader/Loader";
+import styles from "./AppLayout.module.css";
 
 export const metadata = {
   title: "Genesis ERP",
@@ -15,13 +18,13 @@ export default function RootLayout({ children }) {
       <body>
         <AuthProvider>
           <AuthRehydrator>
-            <div style={{ display: "flex", height: "100vh" }}>
-              <Sidebar />
-              <div
-                style={{ flex: 1, display: "flex", flexDirection: "column" }}
-              >
+            <div className={styles.container}>
+              <Sidebar className={styles.sidebar} />
+              <div className={styles.content}>
                 <NavBar />
-                <main style={{ flex: 1, padding: "1rem" }}>{children}</main>
+                <main className={styles.main}>
+                  <Suspense fallback={<Loader />}>{children}</Suspense>
+                </main>
               </div>
             </div>
           </AuthRehydrator>
