@@ -14,12 +14,15 @@ export default function ProductsPage() {
   // Filtre
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [supplierFilter, setSupplierFilter] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [inStockOnly, setInStockOnly] = useState(false);
 
-  // Categoriile vin din DB (exemplu: endpointul /api/categories)
+  // Categoriile vin din DB (endpointul /api/categories)
   const [categories, setCategories] = useState([]);
+  // Furnizorii vin din DB (endpointul /api/suppliers)
+  const [suppliers, setSuppliers] = useState([]);
 
   // Produsul selectat pentru modalul de detalii
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -52,6 +55,16 @@ export default function ProductsPage() {
       .catch((err) => console.error(err));
   }, [BASE_URL]);
 
+  // Fetch furnizori din backend
+  useEffect(() => {
+    axios
+      .get(`${BASE_URL}/api/suppliers`, { withCredentials: true })
+      .then((res) => {
+        setSuppliers(res.data);
+      })
+      .catch((err) => console.error(err));
+  }, [BASE_URL]);
+
   // Filtrare locală cu useMemo
   const filteredProducts = useMemo(() => {
     return products.filter((prod) => {
@@ -63,6 +76,10 @@ export default function ProductsPage() {
         ? prod.category === categoryFilter
         : true;
 
+      const matchesSupplier = supplierFilter
+        ? prod.mainSupplier?.name === supplierFilter
+        : true;
+
       const price = prod.price || 0;
       const aboveMin = minPrice ? price >= parseFloat(minPrice) : true;
       const belowMax = maxPrice ? price <= parseFloat(maxPrice) : true;
@@ -70,10 +87,33 @@ export default function ProductsPage() {
       const isInStock = inStockOnly ? prod.currentStock > 0 : true;
 
       return (
-        matchesSearch && matchesCategory && aboveMin && belowMax && isInStock
+        matchesSearch &&
+        matchesCategory &&
+        matchesSupplier &&
+        aboveMin &&
+        belowMax &&
+        isInStock
       );
     });
-  }, [products, searchTerm, categoryFilter, minPrice, maxPrice, inStockOnly]);
+  }, [
+    products,
+    searchTerm,
+    categoryFilter,
+    supplierFilter,
+    minPrice,
+    maxPrice,
+    inStockOnly,
+  ]);
+
+  // Handler pentru resetarea tuturor filtrelor
+  const handleResetFilters = () => {
+    setSearchTerm("");
+    setCategoryFilter("");
+    setSupplierFilter("");
+    setMinPrice("");
+    setMaxPrice("");
+    setInStockOnly(false);
+  };
 
   // Handlers pentru deschiderea modalelor CRUD
   const handleAddProduct = () => setShowAddModal(true);
@@ -86,7 +126,7 @@ export default function ProductsPage() {
   };
   const handleCloseProductModal = () => setSelectedProduct(null);
 
-  // După operații CRUD, refetch produsele (poți adăuga funcționalitate suplimentară)
+  // După operații CRUD, refetch produsele
   const refetchProducts = () => {
     axios
       .get(`${BASE_URL}/api/products`, { withCredentials: true })
@@ -130,6 +170,20 @@ export default function ProductsPage() {
           ))}
         </select>
 
+        {/* Select pentru furnizori */}
+        <select
+          className={styles.supplierFilter}
+          value={supplierFilter}
+          onChange={(e) => setSupplierFilter(e.target.value)}
+        >
+          <option value="">Toti furnizorii</option>
+          {suppliers.map((sup) => (
+            <option key={sup} value={sup}>
+              {sup}
+            </option>
+          ))}
+        </select>
+
         <div className={styles.priceInputs}>
           <input
             className={styles.priceInput}
@@ -155,6 +209,11 @@ export default function ProductsPage() {
           />
           &nbsp; In Stoc
         </label>
+
+        {/* Buton de resetare a filtrelor */}
+        <button onClick={handleResetFilters} className={styles.resetButton}>
+          Sterge Filtre
+        </button>
       </div>
 
       {/* Tabel cu produse */}
@@ -164,11 +223,11 @@ export default function ProductsPage() {
             <th className={styles.colBarCode}>ID</th>
             <th className={styles.colName}>Nume</th>
             <th className={styles.colSupplier}>Furnizor</th>
-            <th className={styles.colPrice}>Preț</th>
+            <th className={styles.colCategory}>Categorie</th>
+            <th className={styles.colPrice}>Pret</th>
             <th className={styles.colStock}>Stoc</th>
           </tr>
         </thead>
-
         <tbody>
           {filteredProducts.map((prod) => {
             const inStock = prod.currentStock > 0;
@@ -182,6 +241,7 @@ export default function ProductsPage() {
                   {prod.name}
                 </td>
                 <td>{prod.mainSupplier?.name || "N/A"}</td>
+                <td>{prod.category || "N/A"}</td>
                 <td>{prod.price} Lei</td>
                 <td>
                   {inStock ? (

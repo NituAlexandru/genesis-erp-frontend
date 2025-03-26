@@ -34,6 +34,25 @@
   height: 35px;
   cursor: pointer;
 }
+.supplierFilter {
+  min-width: 100px;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+.resetButton {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #e0e0e0;
+  color: #333;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.resetButton:hover {
+  background-color: #ccc;
+}
+
 .searchBar {
   min-width: 500px;
   padding: 0.5rem;
@@ -42,7 +61,6 @@
 /* Grup pentru câmpurile de preț (Min/Max) */
 .priceInputs {
   display: flex;
-  flex-direction: column;
   gap: 5px;
   align-items: center;
 }
@@ -50,6 +68,7 @@
 /* Stilul pentru fiecare input numeric de preț */
 .priceInput {
   width: 90px;
+  height: 35px;
 }
 
 .table {
@@ -77,6 +96,9 @@
 .colName {
   width: 250px;
 }
+.colCategory {
+  width: 120px;
+}
 .colSupplier {
   width: 150px;
 }
@@ -84,7 +106,7 @@
   width: 80px;
 }
 .colStock {
-  width: 60px;
+  width: 40px;
 }
 
 .productName {
