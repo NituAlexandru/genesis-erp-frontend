@@ -46,6 +46,7 @@ export default function NavBar() {
           alt="Genesis ERP"
           width={150}
           height={50}
+          priority
         />
       </div>
 

@@ -1,0 +1,102 @@
+.container {
+  padding: 1rem;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.actions button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #0070f3;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.actions button:hover {
+  background-color: #005bb5;
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.categoryFilter {
+  height: 35px;
+  cursor: pointer;
+}
+.searchBar {
+  min-width: 500px;
+  padding: 0.5rem;
+}
+
+/* Grup pentru câmpurile de preț (Min/Max) */
+.priceInputs {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+}
+
+/* Stilul pentru fiecare input numeric de preț */
+.priceInput {
+  width: 90px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.table thead {
+  border-bottom: 1px solid #ccc;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid #eee;
+}
+
+.table th,
+.table td {
+  padding: 8px;
+  text-align: left;
+}
+.colBarCode {
+  width: 100px;
+}
+.colName {
+  width: 250px;
+}
+.colSupplier {
+  width: 150px;
+}
+.colPrice {
+  width: 80px;
+}
+.colStock {
+  width: 60px;
+}
+
+.productName {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.inStockYes {
+  color: green;
+}
+
+.inStockNo {
+  color: red;
+}
