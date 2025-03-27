@@ -51,8 +51,14 @@
   border-radius: 4px;
   font-weight: bold;
   font-size: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.3s ease, transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .button:hover {
-  opacity: 0.9;
+  background-color: var(--brand-red);
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }

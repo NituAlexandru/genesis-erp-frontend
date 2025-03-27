@@ -30,8 +30,11 @@
   background: transparent;
   border: none;
   padding: 0;
-  cursor: pointer;
-  width: 100%;
   text-align: left;
-  font: inherit;
+  box-shadow: none;
+  color: red;
+}
+.logoutButton:hover {
+  transform: translate(0);
+  box-shadow: none;
 }

@@ -3,26 +3,3 @@
   gap: 1rem;
   margin-bottom: 1rem;
 }
-
-.actions button {
-  padding: 0.5rem 1rem;
-  border: none;
-  background-color: #0070f3;
-  color: white;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
-}
-
-.actions button:hover {
-  background-color: #005bb5;
-}
-
-.resetButton {
-  background-color: #e0e0e0;
-  color: #333;
-}
-
-.resetButton:hover {
-  background-color: #ccc;
-}

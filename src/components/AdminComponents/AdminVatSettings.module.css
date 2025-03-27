@@ -24,18 +24,3 @@
   margin-left: 0.5rem;
   width: 60px;
 }
-
-.btn {
-  padding: 0.5rem 1rem;
-  border: none;
-  background-color: #0070f3;
-  color: #fff;
-  cursor: pointer;
-  border-radius: 4px;
-  margin-top: 0.5rem;
-  transition: background-color 0.2s ease;
-}
-
-.btnHover:hover {
-  background-color: #005bb5;
-}

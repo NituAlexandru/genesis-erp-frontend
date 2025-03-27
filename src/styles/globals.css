@@ -25,6 +25,41 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.button {
-  border-radius: 5px;
+button {
+  background-color: var(--brand-red);
+  color: #fff;
+  padding: 10px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px; /* Folosește valoarea dorită, aici am setat 5px */
+  font-weight: bold;
+  font-size: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.3s ease, transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+button:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+input {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: border-color 0.2s ease;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--brand-red);
+}
+
+input[type="checkbox"] {
+  accent-color: var(--brand-red);
+  transform: scale(1.5);
+  cursor: pointer;
 }

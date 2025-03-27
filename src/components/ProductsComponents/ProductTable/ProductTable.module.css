@@ -1,51 +1,70 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
 }
 
 .table thead {
-  border-bottom: 1px solid #ccc;
+  background-color: #f4f4f4;
+  border-bottom: 2px solid #ddd;
+}
+
+.table thead th {
+  padding: 12px 8px;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .table tbody tr {
+  transition: background-color 0.3s ease, color 0.3s ease;
   border-bottom: 1px solid #eee;
+}
+
+.table tbody tr:hover {
+  background-color: #e9e9e9;
 }
 
 .table th,
 .table td {
-  padding: 8px;
+  padding: 8px 6px;
   text-align: left;
+  font-size: 1rem;
 }
+
 .colBarCode {
-  width: 100px;
+  width: 120px;
 }
 .colName {
   width: 250px;
 }
 .colCategory {
-  width: 120px;
+  width: 140px;
 }
 .colSupplier {
-  width: 150px;
+  width: 160px;
 }
 .colPrice {
-  width: 80px;
+  width: 100px;
 }
 .colStock {
-  width: 40px;
+  width: 80px;
 }
 
+/* Stiluri pentru linkurile de tip text */
 .productName {
-  color: blue;
+  color: #0070f3;
   text-decoration: underline;
   cursor: pointer;
 }
 
+/* Stiluri pentru indicatorul de stoc */
 .inStockYes {
-  color: green;
+  color: #28a745;
+  font-weight: bold;
 }
-
 .inStockNo {
-  color: red;
+  color: #dc3545;
+  font-weight: bold;
 }
