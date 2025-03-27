@@ -1,13 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import styles from "./ProductMarkupTable.module.css";
 import Notiflix from "notiflix";
+import styles from "./ProductMarkupTable.module.css";
+import ProductMarkupFilter from "./ProductMarkupFilter";
 
 export default function ProductMarkupTable() {
   const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
   const [products, setProducts] = useState([]);
+
+  // Stări pentru filtrare
+  const [searchTerm, setSearchTerm] = useState("");
+  const [minMarkup, setMinMarkup] = useState("");
+  const [maxMarkup, setMaxMarkup] = useState("");
 
   useEffect(() => {
     axios
@@ -15,6 +21,37 @@ export default function ProductMarkupTable() {
       .then((res) => setProducts(res.data))
       .catch((err) => console.error(err));
   }, [BASE_URL]);
+
+  // Funcție de resetare a filtrelor
+  const resetFilters = () => {
+    setSearchTerm("");
+    setMinMarkup("");
+    setMaxMarkup("");
+  };
+
+  // Filtrare locală (exemplu: filtrare după nume și după markup1)
+  const filteredProducts = useMemo(() => {
+    return products.filter((prod) => {
+      const matchesSearch = prod.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
+      const markup1 = prod.defaultMarkups?.markup1 || 0;
+      const min = parseFloat(minMarkup) || 0;
+      const max = maxMarkup ? parseFloat(maxMarkup) : Infinity;
+      const matchesMarkup = markup1 >= min && markup1 <= max;
+
+      return matchesSearch && matchesMarkup;
+    });
+  }, [products, searchTerm, minMarkup, maxMarkup]);
+
+  // Funcție utilitară pentru calculul prețului de vânzare
+  const calculateSalePrice = (averagePurchasePrice, markup) => {
+    if (averagePurchasePrice === null || averagePurchasePrice === undefined)
+      return "N/A";
+    const salePrice = averagePurchasePrice * (1 + markup / 100);
+    return salePrice.toFixed(2) + " Lei";
+  };
 
   const handleMarkupChange = (productId, field, value) => {
     setProducts((prev) =>
@@ -48,18 +85,7 @@ export default function ProductMarkupTable() {
       );
       const { name, defaultMarkups } = res.data;
       Notiflix.Notify.success(
-        `Markup-uri actualizate pentru: ${name}. Marja 1: ${
-          defaultMarkups.markup1
-        }% (${calculateSalePrice(
-          product.averagePurchasePrice,
-          defaultMarkups.markup1
-        )} Lei), Marja 2: ${defaultMarkups.markup2}% (${calculateSalePrice(
-          product.averagePurchasePrice,
-          defaultMarkups.markup2
-        )} Lei), Marja 3: ${defaultMarkups.markup3}% (${calculateSalePrice(
-          product.averagePurchasePrice,
-          defaultMarkups.markup3
-        )} Lei)`
+        `Markup-uri actualizate pentru: ${name}. Marja 1 - ${defaultMarkups.markup1}%, Marja 2 - ${defaultMarkups.markup2}%, Marja 3 - ${defaultMarkups.markup3}%`
       );
     } catch (error) {
       console.error(error);
@@ -67,16 +93,19 @@ export default function ProductMarkupTable() {
     }
   };
 
-  // Funcție utilitară pentru calculul prețului de vânzare
-  const calculateSalePrice = (averagePurchasePrice, markup) => {
-    if (!averagePurchasePrice) return "N/A";
-    const salePrice = averagePurchasePrice * (1 + markup / 100);
-    return salePrice.toFixed(2);
-  };
-
   return (
     <div>
       <h3>Setări Marja Profit Produse</h3>
+      {/* Componenta de filtrare cu butonul de reset */}
+      <ProductMarkupFilter
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        minMarkup={minMarkup}
+        setMinMarkup={setMinMarkup}
+        maxMarkup={maxMarkup}
+        setMaxMarkup={setMaxMarkup}
+        resetFilters={resetFilters}
+      />
       <table className={styles.table}>
         <thead>
           <tr>
@@ -93,12 +122,13 @@ export default function ProductMarkupTable() {
           </tr>
         </thead>
         <tbody>
-          {products.map((prod) => (
+          {filteredProducts.map((prod) => (
             <tr key={prod._id}>
               <td>{prod.barCode || prod._id}</td>
               <td>{prod.name}</td>
               <td className={styles.colAverage}>
-                {prod.averagePurchasePrice
+                {prod.averagePurchasePrice !== undefined &&
+                prod.averagePurchasePrice !== null
                   ? prod.averagePurchasePrice.toFixed(2) + " Lei"
                   : "N/A"}
               </td>
@@ -113,7 +143,8 @@ export default function ProductMarkupTable() {
                 />
               </td>
               <td className={styles.markup}>
-                {prod.averagePurchasePrice
+                {prod.averagePurchasePrice !== undefined &&
+                prod.averagePurchasePrice !== null
                   ? calculateSalePrice(
                       prod.averagePurchasePrice,
                       prod.defaultMarkups?.markup1 || 0
@@ -131,7 +162,8 @@ export default function ProductMarkupTable() {
                 />
               </td>
               <td className={styles.markup}>
-                {prod.averagePurchasePrice
+                {prod.averagePurchasePrice !== undefined &&
+                prod.averagePurchasePrice !== null
                   ? calculateSalePrice(
                       prod.averagePurchasePrice,
                       prod.defaultMarkups?.markup2 || 0
@@ -149,7 +181,8 @@ export default function ProductMarkupTable() {
                 />
               </td>
               <td className={styles.markup}>
-                {prod.averagePurchasePrice
+                {prod.averagePurchasePrice !== undefined &&
+                prod.averagePurchasePrice !== null
                   ? calculateSalePrice(
                       prod.averagePurchasePrice,
                       prod.defaultMarkups?.markup3 || 0

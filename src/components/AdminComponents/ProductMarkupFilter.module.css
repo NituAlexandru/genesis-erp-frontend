@@ -1,0 +1,32 @@
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.searchBar {
+  flex: 1;
+  padding: 0.5rem;
+  min-width: 200px;
+  max-width: 250px;
+}
+
+.markupInput {
+  width: 120px;
+  padding: 0.5rem;
+}
+
+.resetButton {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #e0e0e0;
+  color: #333;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.resetButton:hover {
+  background-color: #ccc;
+}

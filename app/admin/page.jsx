@@ -15,7 +15,6 @@ import styles from "./AdminPage.module.css";
 export default function AdminPage() {
   const { user, isAuthenticated, loading } = useAuth();
   const router = useRouter();
-
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);

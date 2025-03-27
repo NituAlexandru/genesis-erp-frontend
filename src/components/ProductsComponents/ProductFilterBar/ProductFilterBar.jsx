@@ -16,7 +16,6 @@ export default function ProductFilterBar({
   setMaxPrice,
   inStockOnly,
   setInStockOnly,
-  // resetFilters,  <- nu mai este necesar
   categories,
   suppliers,
 }) {
