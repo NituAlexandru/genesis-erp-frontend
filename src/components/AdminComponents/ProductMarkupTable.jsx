@@ -48,7 +48,18 @@ export default function ProductMarkupTable() {
       );
       const { name, defaultMarkups } = res.data;
       Notiflix.Notify.success(
-        `Marja de profit actualizată pentru: ${name}. Marja 1 - ${defaultMarkups.markup1}%, Marja 2 - ${defaultMarkups.markup2}%, Marja 3 - ${defaultMarkups.markup3}%`
+        `Markup-uri actualizate pentru: ${name}. Marja 1: ${
+          defaultMarkups.markup1
+        }% (${calculateSalePrice(
+          product.averagePurchasePrice,
+          defaultMarkups.markup1
+        )} Lei), Marja 2: ${defaultMarkups.markup2}% (${calculateSalePrice(
+          product.averagePurchasePrice,
+          defaultMarkups.markup2
+        )} Lei), Marja 3: ${defaultMarkups.markup3}% (${calculateSalePrice(
+          product.averagePurchasePrice,
+          defaultMarkups.markup3
+        )} Lei)`
       );
     } catch (error) {
       console.error(error);
@@ -56,18 +67,29 @@ export default function ProductMarkupTable() {
     }
   };
 
+  // Funcție utilitară pentru calculul prețului de vânzare
+  const calculateSalePrice = (averagePurchasePrice, markup) => {
+    if (!averagePurchasePrice) return "N/A";
+    const salePrice = averagePurchasePrice * (1 + markup / 100);
+    return salePrice.toFixed(2);
+  };
+
   return (
     <div>
-      <h3>Marja Profit Produse</h3>
+      <h3>Setări Marja Profit Produse</h3>
       <table className={styles.table}>
         <thead>
           <tr>
             <th className={styles.colBarCode}>ID</th>
             <th className={styles.colName}>Nume</th>
-            <th className={`${styles.markup}`}>Marja 1 (%)</th>
-            <th className={`${styles.markup}`}>Marja 2 (%)</th>
-            <th className={`${styles.markup}`}>Marja 3 (%)</th>
-            <th></th>
+            <th className={styles.colAverage}>Pret intrare</th>
+            <th className={styles.markup}>Marja 1 (%)</th>
+            <th className={styles.markup}>Pret 1</th>
+            <th className={styles.markup}>Marja 2 (%)</th>
+            <th className={styles.markup}>Pret 2</th>
+            <th className={styles.markup}>Marja 3 (%)</th>
+            <th className={styles.markup}>Pret 3</th>
+            <th>Acțiune</th>
           </tr>
         </thead>
         <tbody>
@@ -75,6 +97,11 @@ export default function ProductMarkupTable() {
             <tr key={prod._id}>
               <td>{prod.barCode || prod._id}</td>
               <td>{prod.name}</td>
+              <td className={styles.colAverage}>
+                {prod.averagePurchasePrice
+                  ? prod.averagePurchasePrice.toFixed(2) + " Lei"
+                  : "N/A"}
+              </td>
               <td className={styles.markup}>
                 <input
                   type="number"
@@ -84,6 +111,14 @@ export default function ProductMarkupTable() {
                     handleMarkupChange(prod._id, "markup1", e.target.value)
                   }
                 />
+              </td>
+              <td className={styles.markup}>
+                {prod.averagePurchasePrice
+                  ? calculateSalePrice(
+                      prod.averagePurchasePrice,
+                      prod.defaultMarkups?.markup1 || 0
+                    )
+                  : "N/A"}
               </td>
               <td className={styles.markup}>
                 <input
@@ -96,6 +131,14 @@ export default function ProductMarkupTable() {
                 />
               </td>
               <td className={styles.markup}>
+                {prod.averagePurchasePrice
+                  ? calculateSalePrice(
+                      prod.averagePurchasePrice,
+                      prod.defaultMarkups?.markup2 || 0
+                    )
+                  : "N/A"}
+              </td>
+              <td className={styles.markup}>
                 <input
                   type="number"
                   className={styles.input}
@@ -105,12 +148,20 @@ export default function ProductMarkupTable() {
                   }
                 />
               </td>
+              <td className={styles.markup}>
+                {prod.averagePurchasePrice
+                  ? calculateSalePrice(
+                      prod.averagePurchasePrice,
+                      prod.defaultMarkups?.markup3 || 0
+                    )
+                  : "N/A"}
+              </td>
               <td>
                 <button
                   className={styles.btn}
                   onClick={() => handleUpdateMarkups(prod._id)}
                 >
-                  Actualizeaza
+                  Actualizează
                 </button>
               </td>
             </tr>
