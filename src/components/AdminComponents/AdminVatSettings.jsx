@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import styles from "./AdminPricingSettings.module.css";
+import styles from "./AdminVatSettings.module.css";
+import Notiflix from "notiflix";
 
-export default function AdminPricingSettings() {
+export default function AdminVatSettings() {
   const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
   const [vatRate, setVatRate] = useState(19); // 19% implicit
 
@@ -27,9 +28,12 @@ export default function AdminPricingSettings() {
         { vatRate: vatRate / 100 }, //  0.19 pentru 19%
         { withCredentials: true }
       );
-      alert("TVA actualizat: " + res.data.vatRate);
+      Notiflix.Notify.success(
+        "Cota TVA actualizata este de " + res.data.vatRate * 100 + "%"
+      );
     } catch (error) {
       console.error(error);
+      Notiflix.Notify.failure("Eroare la actualizarea TVA");
     }
   };
 

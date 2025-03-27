@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import styles from "./ProductMarkupTable.module.css";
+import Notiflix from "notiflix";
 
 export default function ProductMarkupTable() {
   const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -15,7 +16,6 @@ export default function ProductMarkupTable() {
       .catch((err) => console.error(err));
   }, [BASE_URL]);
 
- 
   const handleMarkupChange = (productId, field, value) => {
     setProducts((prev) =>
       prev.map((prod) =>
@@ -46,10 +46,13 @@ export default function ProductMarkupTable() {
         },
         { withCredentials: true }
       );
-      alert(`Markup-uri actualizate pentru: ${res.data.name}`);
+      const { name, defaultMarkups } = res.data;
+      Notiflix.Notify.success(
+        `Marja de profit actualizată pentru: ${name}. Marja 1 - ${defaultMarkups.markup1}%, Marja 2 - ${defaultMarkups.markup2}%, Marja 3 - ${defaultMarkups.markup3}%`
+      );
     } catch (error) {
       console.error(error);
-      alert("Eroare la actualizarea markup-urilor");
+      Notiflix.Notify.failure("Eroare la actualizarea marjei de profit");
     }
   };
 
@@ -107,7 +110,7 @@ export default function ProductMarkupTable() {
                   className={styles.btn}
                   onClick={() => handleUpdateMarkups(prod._id)}
                 >
-                  Update
+                  Actualizeaza
                 </button>
               </td>
             </tr>

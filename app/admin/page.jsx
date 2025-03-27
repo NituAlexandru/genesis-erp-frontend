@@ -8,7 +8,7 @@ import EditUserModal from "@/components/Modals/EditUserModal";
 import DeleteUserModal from "@/components/Modals/DeleteUserModal";
 import Loader from "@/components/Loader/Loader";
 import Notiflix from "notiflix";
-import AdminPricingSettings from "@/components/AdminComponents/AdminPricingSettings";
+import AdminVatSettings from "@/components/AdminComponents/AdminVatSettings";
 import ProductMarkupTable from "@/components/AdminComponents/ProductMarkupTable";
 import styles from "./AdminPage.module.css";
 
@@ -64,7 +64,7 @@ export default function AdminPage() {
       </div>
 
       {/* Secțiune pentru setările TVA (global) */}
-      <AdminPricingSettings />
+      <AdminVatSettings />
 
       {/* Secțiune pentru markup-uri pe produse */}
       <ProductMarkupTable />
