@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
@@ -8,6 +8,8 @@ import EditUserModal from "@/components/Modals/EditUserModal";
 import DeleteUserModal from "@/components/Modals/DeleteUserModal";
 import Loader from "@/components/Loader/Loader";
 import Notiflix from "notiflix";
+import AdminPricingSettings from "@/components/AdminComponents/AdminPricingSettings";
+import ProductMarkupTable from "@/components/AdminComponents/ProductMarkupTable";
 import styles from "./AdminPage.module.css";
 
 export default function AdminPage() {
@@ -60,6 +62,13 @@ export default function AdminPage() {
           Șterge Utilizator
         </button>
       </div>
+
+      {/* Secțiune pentru setările TVA (global) */}
+      <AdminPricingSettings />
+
+      {/* Secțiune pentru markup-uri pe produse */}
+      <ProductMarkupTable />
+
       {createModalOpen && (
         <CreateUserModal
           isOpen={createModalOpen}
