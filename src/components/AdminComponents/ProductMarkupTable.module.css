@@ -1,16 +1,27 @@
 .table {
   width: 100%;
   border-collapse: collapse;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
 }
 
 .table thead {
-  border-bottom: 1px solid #ccc;
+  background-color: #facdcd;
+  border-bottom: 2px solid #ddd;
 }
+.table thead th {
+  padding: 12px 8px;
+  font-size: 0.95rem;
 
+  letter-spacing: 0.02em;
+}
 .table tbody tr {
+  transition: background-color 0.3s ease, color 0.3s ease;
   border-bottom: 1px solid #eee;
 }
-
+.table tbody tr:hover {
+  background-color: #fde7e7;
+}
 .table th,
 .table td {
   padding: 8px;

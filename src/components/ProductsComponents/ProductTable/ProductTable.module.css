@@ -6,7 +6,7 @@
 }
 
 .table thead {
-  background-color: #f4f4f4;
+  background-color: #facdcd;
   border-bottom: 2px solid #ddd;
 }
 
@@ -23,7 +23,7 @@
 }
 
 .table tbody tr:hover {
-  background-color: #e9e9e9;
+  background-color: #fde7e7;
 }
 
 .table th,

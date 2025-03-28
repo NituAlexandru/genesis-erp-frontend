@@ -24,42 +24,81 @@ body {
   font-family: Arial, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
-
+/* button */
 button {
   background-color: var(--brand-red);
   color: #fff;
   padding: 10px 16px;
   border: none;
   cursor: pointer;
-  border-radius: 5px; /* Folosește valoarea dorită, aici am setat 5px */
+  border-radius: 5px;
   font-weight: bold;
   font-size: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   transition: background-color 0.3s ease, transform 0.2s ease,
     box-shadow 0.2s ease;
 }
-
 button:hover {
   opacity: 0.95;
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-
+/* input */
 input {
   padding: 12px;
   border: 1px solid #ccc;
   border-radius: 6px;
   transition: border-color 0.2s ease;
 }
-
 input:focus,
 textarea:focus {
   outline: none;
   border-color: var(--brand-red);
 }
-
 input[type="checkbox"] {
   accent-color: var(--brand-red);
   transform: scale(1.5);
   cursor: pointer;
+}
+select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+select:focus {
+  outline: none;
+  border-color: var(--brand-red);
+}
+/* table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.table thead {
+  background-color: #f4f4f4;
+  border-bottom: 2px solid #ddd;
+}
+
+.table thead th {
+  padding: 12px 8px;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.table tbody tr {
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border-bottom: 1px solid #eee;
+}
+.table th,
+.table td {
+  padding: 8px 6px;
+  text-align: left;
+  font-size: 1rem;
 }
