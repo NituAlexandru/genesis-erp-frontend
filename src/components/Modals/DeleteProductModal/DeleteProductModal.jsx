@@ -3,7 +3,7 @@
 import { createPortal } from "react-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import styles from "./DeleteProductModal.module.css"; // Reutilizăm același stil
+import styles from "./DeleteProductModal.module.css";
 
 export default function DeleteProductModal({ onClose }) {
   const [mounted, setMounted] = useState(false);

@@ -45,21 +45,21 @@
 .colSupplier {
   width: 160px;
 }
-.colPrice {
+.colPrice1,
+.colPrice2,
+.colPrice3 {
   width: 100px;
 }
 .colStock {
   width: 80px;
 }
 
-/* Stiluri pentru linkurile de tip text */
 .productName {
   color: #0070f3;
   text-decoration: underline;
   cursor: pointer;
 }
 
-/* Stiluri pentru indicatorul de stoc */
 .inStockYes {
   color: #28a745;
   font-weight: bold;
