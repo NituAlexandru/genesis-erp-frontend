@@ -21,6 +21,7 @@ export default function AddProductModal({ onClose }) {
     width: 0,
     height: 0,
     weight: 0,
+    averagePurchasePrice: "",
     packaging: {
       itemsPerBox: 0,
       boxesPerPallet: 0,
@@ -39,13 +40,11 @@ export default function AddProductModal({ onClose }) {
     name: "",
   });
 
-  // Când user tastează în input-ul de categorie, căutăm în DB
   useEffect(() => {
     if (categorySearch.length > 2) {
       axios
         .get(`${BASE_URL}/api/categories/search?query=${categorySearch}`)
         .then((res) => {
-          // array de obiecte { _id, name }
           setCategorySuggestions(res.data);
         })
         .catch((err) => console.error(err));
@@ -64,13 +63,11 @@ export default function AddProductModal({ onClose }) {
     name: "",
   });
 
-  // Când user tastează în input-ul de furnizor, căutăm în DB
   useEffect(() => {
     if (supplierSearch.length > 2) {
       axios
         .get(`${BASE_URL}/api/suppliers/search?query=${supplierSearch}`)
         .then((res) => {
-          // array de obiecte { _id, name }
           setSupplierSuggestions(res.data);
         })
         .catch((err) => console.error(err));
@@ -79,29 +76,34 @@ export default function AddProductModal({ onClose }) {
     }
   }, [supplierSearch, BASE_URL]);
 
-  // Montăm componenta (pentru createPortal)
   useEffect(() => {
     setMounted(true);
   }, []);
 
   if (!mounted) return null;
 
-  // Gestionează câmpurile text/number (formData)
+  // Handle input changes (formData) – log pentru debugging
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name.includes(".")) {
-      // Ex: "packaging.itemsPerBox"
       const [parent, child] = name.split(".");
-      setFormData((prev) => ({
-        ...prev,
-        [parent]: { ...prev[parent], [child]: value },
-      }));
+      setFormData((prev) => {
+        const newData = {
+          ...prev,
+          [parent]: { ...prev[parent], [child]: value },
+        };
+        // console.log("DEBUG handleChange:", newData);
+        return newData;
+      });
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setFormData((prev) => {
+        const newData = { ...prev, [name]: value };
+        // console.log("DEBUG handleChange:", newData);
+        return newData;
+      });
     }
   };
 
-  // Gestionează imaginile
   const handleImageChange = (e) => {
     setImages([...e.target.files]);
   };
@@ -109,8 +111,8 @@ export default function AddProductModal({ onClose }) {
   // Submit formular
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("DEBUG handleSubmit -> formData:", formData);
 
-    // Construim un FormData pentru multipart/form-data
     const data = new FormData();
     data.append("name", formData.name);
     data.append("barCode", formData.barCode);
@@ -121,8 +123,12 @@ export default function AddProductModal({ onClose }) {
     data.append("width", formData.width);
     data.append("height", formData.height);
     data.append("weight", formData.weight);
+    // Convertim averagePurchasePrice la număr; dacă este "", va deveni 0.
+    data.append(
+      "averagePurchasePrice",
+      Number(formData.averagePurchasePrice) || 0
+    );
 
-    // Packaging
     data.append("packaging.itemsPerBox", formData.packaging.itemsPerBox);
     data.append("packaging.boxesPerPallet", formData.packaging.boxesPerPallet);
     data.append("packaging.itemsPerPallet", formData.packaging.itemsPerPallet);
@@ -131,26 +137,25 @@ export default function AddProductModal({ onClose }) {
       formData.packaging.maxPalletsPerTruck
     );
 
-    // Adăugăm ID-urile selectate
-    // - category = selectedCategory._id
-    // - mainSupplier = selectedSupplier._id
     data.append("category", selectedCategory._id);
     data.append("mainSupplier", selectedSupplier._id);
 
-    // Imagini
     images.forEach((img) => {
       data.append("images", img);
     });
 
-    // Trimitem cererea
+    // Logăm conținutul FormData pentru debugging
+    for (let pair of data.entries()) {
+      console.log("DEBUG FormData entry:", pair[0], pair[1]);
+    }
+
     axios
       .post(`${BASE_URL}/api/products`, data)
       .then(() => {
-        // Închidem modalul și, eventual, reîncărcăm lista de produse
         onClose();
       })
       .catch((err) => {
-        console.error(err);
+        console.error("ERROR in handleSubmit:", err);
       });
   };
 
@@ -204,10 +209,8 @@ export default function AddProductModal({ onClose }) {
                     <input
                       type="text"
                       placeholder="Caută categorie..."
-                      // Afișăm fie ce a selectat userul, fie ce tastează
                       value={selectedCategory.name || categorySearch}
                       onChange={(e) => {
-                        // Resetăm selecția dacă userul tastează altceva
                         setSelectedCategory({ _id: "", name: "" });
                         setCategorySearch(e.target.value);
                       }}
@@ -279,7 +282,7 @@ export default function AddProductModal({ onClose }) {
               </div>
 
               <div>
-                <label>Stoc minim:</label>
+                <label>Stoc minim dorit:</label>
                 <input
                   name="minStock"
                   type="number"
@@ -288,7 +291,7 @@ export default function AddProductModal({ onClose }) {
                 />
               </div>
               <div>
-                <label>Stoc curent:</label>
+                <label>Stoc initial:</label>
                 <input
                   name="currentStock"
                   type="number"
@@ -297,7 +300,7 @@ export default function AddProductModal({ onClose }) {
                 />
               </div>
               <div>
-                <label>Lungime:</label>
+                <label>Lungime (cm):</label>
                 <input
                   name="length"
                   type="number"
@@ -306,7 +309,7 @@ export default function AddProductModal({ onClose }) {
                 />
               </div>
               <div>
-                <label>Lățime:</label>
+                <label>Lățime (cm):</label>
                 <input
                   name="width"
                   type="number"
@@ -315,7 +318,7 @@ export default function AddProductModal({ onClose }) {
                 />
               </div>
               <div>
-                <label>Înălțime:</label>
+                <label>Înălțime (cm):</label>
                 <input
                   name="height"
                   type="number"
@@ -324,11 +327,20 @@ export default function AddProductModal({ onClose }) {
                 />
               </div>
               <div>
-                <label>Greutate:</label>
+                <label>Greutate (kg):</label>
                 <input
                   name="weight"
                   type="number"
                   value={formData.weight}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label>Preț intrare pe bucata (Lei):</label>
+                <input
+                  name="averagePurchasePrice"
+                  type="number"
+                  value={formData.averagePurchasePrice}
                   onChange={handleChange}
                 />
               </div>
