@@ -31,50 +31,83 @@ export default function AddProductModal({ onClose }) {
   });
 
   // ---------------------
+  //   LISTE COMPLETE
+  // ---------------------
+  const [allCategories, setAllCategories] = useState([]);
+  const [allSuppliers, setAllSuppliers] = useState([]);
+
+  // La mount, încărcăm TOATE categoriile și TOȚI furnizorii (ca să avem lista completă)
+  useEffect(() => {
+    axios
+      .get(`${BASE_URL}/api/categories`)
+      .then((res) => {
+        // res.data ar trebui să fie array de obiecte { _id, name }
+        setAllCategories(res.data);
+      })
+      .catch((err) => console.error(err));
+
+    axios
+      .get(`${BASE_URL}/api/suppliers`)
+      .then((res) => {
+        // res.data poate fi un array de nume sau un array de obiecte
+        // Depinde de implementarea ta; dacă e doar un array de string, va trebui adaptat
+        setAllSuppliers(res.data);
+      })
+      .catch((err) => console.error(err));
+  }, [BASE_URL]);
+
+  // ---------------------
   //   CATEGORIE
   // ---------------------
   const [categorySearch, setCategorySearch] = useState("");
   const [categorySuggestions, setCategorySuggestions] = useState([]);
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState({
     _id: "",
     name: "",
   });
 
+  // Filtrăm local categoriile în funcție de categorySearch
   useEffect(() => {
-    if (categorySearch.length > 2) {
-      axios
-        .get(`${BASE_URL}/api/categories/search?query=${categorySearch}`)
-        .then((res) => {
-          setCategorySuggestions(res.data);
-        })
-        .catch((err) => console.error(err));
+    if (!showCategoryDropdown) return;
+
+    if (categorySearch.length < 1) {
+      // Dacă userul nu tastează nimic, afișăm toată lista
+      setCategorySuggestions(allCategories);
     } else {
-      setCategorySuggestions([]);
+      // Filtrăm local
+      const filtered = allCategories.filter((cat) =>
+        cat.name.toLowerCase().includes(categorySearch.toLowerCase())
+      );
+      setCategorySuggestions(filtered);
     }
-  }, [categorySearch, BASE_URL]);
+  }, [categorySearch, allCategories, showCategoryDropdown]);
 
   // ---------------------
   //   SUPPLIER
   // ---------------------
   const [supplierSearch, setSupplierSearch] = useState("");
   const [supplierSuggestions, setSupplierSuggestions] = useState([]);
+  const [showSupplierDropdown, setShowSupplierDropdown] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState({
     _id: "",
     name: "",
   });
 
+  // Filtrăm local furnizorii
   useEffect(() => {
-    if (supplierSearch.length > 2) {
-      axios
-        .get(`${BASE_URL}/api/suppliers/search?query=${supplierSearch}`)
-        .then((res) => {
-          setSupplierSuggestions(res.data);
-        })
-        .catch((err) => console.error(err));
+    if (!showSupplierDropdown) return;
+
+    if (supplierSearch.length < 1) {
+      // Dacă userul nu tastează nimic, afișăm toată lista
+      setSupplierSuggestions(allSuppliers);
     } else {
-      setSupplierSuggestions([]);
+      const filtered = allSuppliers.filter((sup) =>
+        sup.name.toLowerCase().includes(supplierSearch.toLowerCase())
+      );
+      setSupplierSuggestions(filtered);
     }
-  }, [supplierSearch, BASE_URL]);
+  }, [supplierSearch, allSuppliers, showSupplierDropdown]);
 
   useEffect(() => {
     setMounted(true);
@@ -82,28 +115,21 @@ export default function AddProductModal({ onClose }) {
 
   if (!mounted) return null;
 
-  // Handle input changes (formData) – log pentru debugging
+  // Gestionează câmpurile text/number (formData)
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name.includes(".")) {
       const [parent, child] = name.split(".");
-      setFormData((prev) => {
-        const newData = {
-          ...prev,
-          [parent]: { ...prev[parent], [child]: value },
-        };
-        // console.log("DEBUG handleChange:", newData);
-        return newData;
-      });
+      setFormData((prev) => ({
+        ...prev,
+        [parent]: { ...prev[parent], [child]: value },
+      }));
     } else {
-      setFormData((prev) => {
-        const newData = { ...prev, [name]: value };
-        // console.log("DEBUG handleChange:", newData);
-        return newData;
-      });
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
+  // Gestionează imaginile
   const handleImageChange = (e) => {
     setImages([...e.target.files]);
   };
@@ -111,7 +137,6 @@ export default function AddProductModal({ onClose }) {
   // Submit formular
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("DEBUG handleSubmit -> formData:", formData);
 
     const data = new FormData();
     data.append("name", formData.name);
@@ -123,7 +148,6 @@ export default function AddProductModal({ onClose }) {
     data.append("width", formData.width);
     data.append("height", formData.height);
     data.append("weight", formData.weight);
-    // Convertim averagePurchasePrice la număr; dacă este "", va deveni 0.
     data.append(
       "averagePurchasePrice",
       Number(formData.averagePurchasePrice) || 0
@@ -144,19 +168,28 @@ export default function AddProductModal({ onClose }) {
       data.append("images", img);
     });
 
-    // Logăm conținutul FormData pentru debugging
-    for (let pair of data.entries()) {
-      console.log("DEBUG FormData entry:", pair[0], pair[1]);
-    }
-
     axios
       .post(`${BASE_URL}/api/products`, data)
       .then(() => {
         onClose();
       })
       .catch((err) => {
-        console.error("ERROR in handleSubmit:", err);
+        console.error(err);
       });
+  };
+
+  // Când userul face click pe un item din dropdown (categorie)
+  const handleCategorySelect = (cat) => {
+    setSelectedCategory(cat);
+    setCategorySearch(cat.name);
+    setShowCategoryDropdown(false);
+  };
+
+  // Când userul face click pe un item din dropdown (furnizor)
+  const handleSupplierSelect = (sup) => {
+    setSelectedSupplier(sup);
+    setSupplierSearch(sup.name);
+    setShowSupplierDropdown(false);
   };
 
   return createPortal(
@@ -202,83 +235,89 @@ export default function AddProductModal({ onClose }) {
               </div>
 
               {/* Categorie */}
-              <div style={{ position: "relative" }}>
+              <div className={styles.fieldWithDropdown}>
                 <label>Categorie:</label>
-                <div style={{ display: "flex", gap: "0.5rem" }}>
-                  <div style={{ position: "relative", flex: 1 }}>
-                    <input
-                      type="text"
-                      placeholder="Caută categorie..."
-                      value={selectedCategory.name || categorySearch}
-                      onChange={(e) => {
-                        setSelectedCategory({ _id: "", name: "" });
-                        setCategorySearch(e.target.value);
-                      }}
-                    />
-                    {categorySuggestions.length > 0 && (
-                      <ul className={styles.suggestions}>
-                        {categorySuggestions.map((cat) => (
-                          <li
-                            key={cat._id}
-                            onClick={() => {
-                              setSelectedCategory(cat);
-                              setCategorySearch(cat.name);
-                              setCategorySuggestions([]);
-                            }}
-                          >
-                            {cat.name}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
+                <div className={styles.inputRow}>
+                  <input
+                    type="text"
+                    placeholder="Caută categorie..."
+                    value={categorySearch || selectedCategory.name}
+                    onChange={(e) => {
+                      setCategorySearch(e.target.value);
+                      setShowCategoryDropdown(true);
+                    }}
+                  />
+                  {/* Săgeată pentru a deschide/închide dropdown */}
                   <button
                     type="button"
+                    className={styles.arrowBtn}
+                    onClick={() => setShowCategoryDropdown((prev) => !prev)}
+                  >
+                    ▼
+                  </button>
+                  {/* Buton + */}
+                  <button
+                    type="button"
+                    className={styles.plusBtn}
                     onClick={() => alert("Modal adăugare categorie (TODO)")}
                   >
                     +
                   </button>
                 </div>
+                {showCategoryDropdown && categorySuggestions.length > 0 && (
+                  <ul className={styles.suggestions}>
+                    {categorySuggestions.map((cat) => (
+                      <li
+                        key={cat._id}
+                        onClick={() => handleCategorySelect(cat)}
+                      >
+                        {cat.name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               {/* Furnizor */}
-              <div style={{ position: "relative" }}>
+              <div className={styles.fieldWithDropdown}>
                 <label>Furnizor:</label>
-                <div style={{ display: "flex", gap: "0.5rem" }}>
-                  <div style={{ position: "relative", flex: 1 }}>
-                    <input
-                      type="text"
-                      placeholder="Caută furnizor..."
-                      value={selectedSupplier.name || supplierSearch}
-                      onChange={(e) => {
-                        setSelectedSupplier({ _id: "", name: "" });
-                        setSupplierSearch(e.target.value);
-                      }}
-                    />
-                    {supplierSuggestions.length > 0 && (
-                      <ul className={styles.suggestions}>
-                        {supplierSuggestions.map((sup) => (
-                          <li
-                            key={sup._id}
-                            onClick={() => {
-                              setSelectedSupplier(sup);
-                              setSupplierSearch(sup.name);
-                              setSupplierSuggestions([]);
-                            }}
-                          >
-                            {sup.name}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
+                <div className={styles.inputRow}>
+                  <input
+                    type="text"
+                    placeholder="Caută furnizor..."
+                    value={supplierSearch || selectedSupplier.name}
+                    onChange={(e) => {
+                      setSupplierSearch(e.target.value);
+                      setShowSupplierDropdown(true);
+                    }}
+                  />
                   <button
                     type="button"
+                    className={styles.arrowBtn}
+                    onClick={() => setShowSupplierDropdown((prev) => !prev)}
+                  >
+                    ▼
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.plusBtn}
                     onClick={() => alert("Modal adăugare furnizor (TODO)")}
                   >
                     +
                   </button>
                 </div>
+                {showSupplierDropdown && supplierSuggestions.length > 0 && (
+                  <ul className={styles.suggestions}>
+                    {supplierSuggestions.map((sup) => (
+                      <li
+                        key={sup._id}
+                        onClick={() => handleSupplierSelect(sup)}
+                      >
+                        {sup.name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               <div>
