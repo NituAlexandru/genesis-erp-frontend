@@ -7,25 +7,56 @@ import styles from "./EditProductModal.module.css";
 
 export default function EditProductModal({ product, onClose }) {
   const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+  // If a product is provided, we skip the search step
   const [selectedProduct, setSelectedProduct] = useState(product || null);
   const [mounted, setMounted] = useState(false);
   const [images, setImages] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+
+  // For searching products if none is selected
+  const [searchProdQuery, setSearchProdQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
-  // Inițializare formData, în funcție de produsul selectat (dacă există)
+  // ---------- Full Lists for Category & Supplier (for dropdowns) ----------
+  const [allCategories, setAllCategories] = useState([]);
+  const [allSuppliers, setAllSuppliers] = useState([]);
+
+  // ---------- Category Dropdown State ----------
+  const [categorySearch, setCategorySearch] = useState("");
+  const [categorySuggestions, setCategorySuggestions] = useState([]);
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(
+    product?.category || { _id: "", name: "" }
+  );
+
+  // ---------- Supplier Dropdown State ----------
+  const [supplierSearch, setSupplierSearch] = useState("");
+  const [supplierSuggestions, setSupplierSuggestions] = useState([]);
+  const [showSupplierDropdown, setShowSupplierDropdown] = useState(false);
+  const [selectedSupplier, setSelectedSupplier] = useState(
+    product?.mainSupplier || { _id: "", name: "" }
+  );
+
+  // ---------- Form Data (mirroring AddProductModal fields) ----------
   const [formData, setFormData] = useState(
     selectedProduct
       ? {
+          // Basic fields
           name: selectedProduct.name || "",
           barCode: selectedProduct.barCode || "",
           description: selectedProduct.description || "",
-          mainSupplier: selectedProduct.mainSupplier || "",
+
+          // For editing the final output, we rely on selectedCategory / selectedSupplier
+          // in the dropdown states for category & supplier
+
+          // Sales Price fields
           salesPrice: {
             price1: selectedProduct.salesPrice?.price1 || 0,
             price2: selectedProduct.salesPrice?.price2 || 0,
             price3: selectedProduct.salesPrice?.price3 || 0,
           },
+
+          // Stock & date fields
           minStock: selectedProduct.minStock || 0,
           currentStock: selectedProduct.currentStock || 0,
           firstOrderDate: selectedProduct.firstOrderDate
@@ -34,12 +65,18 @@ export default function EditProductModal({ product, onClose }) {
           lastOrderDate: selectedProduct.lastOrderDate
             ? selectedProduct.lastOrderDate.split("T")[0]
             : "",
+
+          // Dimensions & weight
           length: selectedProduct.length || 0,
           width: selectedProduct.width || 0,
           height: selectedProduct.height || 0,
           weight: selectedProduct.weight || 0,
           volume: selectedProduct.volume || 0,
-          averagePurchasePrice: selectedProduct.averagePurchasePrice || 0,
+
+          // Purchase price
+          averagePurchasePrice: selectedProduct.averagePurchasePrice || "",
+
+          // Markups
           defaultMarkups: {
             markup1: selectedProduct.defaultMarkups?.markup1 || 0,
             markup2: selectedProduct.defaultMarkups?.markup2 || 0,
@@ -53,7 +90,6 @@ export default function EditProductModal({ product, onClose }) {
           name: "",
           barCode: "",
           description: "",
-          mainSupplier: "",
           salesPrice: { price1: 0, price2: 0, price3: 0 },
           minStock: 0,
           currentStock: 0,
@@ -64,24 +100,76 @@ export default function EditProductModal({ product, onClose }) {
           height: 0,
           weight: 0,
           volume: 0,
-          averagePurchasePrice: 0,
+          averagePurchasePrice: "",
           defaultMarkups: { markup1: 0, markup2: 0, markup3: 0 },
           clientMarkups: "",
         }
   );
 
+  // ---------- Load All Categories & Suppliers on Mount ----------
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    axios
+      .get(`${BASE_URL}/api/categories`)
+      .then((res) => setAllCategories(res.data))
+      .catch((err) => console.error(err));
 
-  // Actualizează formData când se selectează un produs (prin căutare)
+    axios
+      .get(`${BASE_URL}/api/suppliers`)
+      .then((res) => setAllSuppliers(res.data))
+      .catch((err) => console.error(err));
+  }, [BASE_URL]);
+
+  // ---------- Product Search (if no product is selected) ----------
+  useEffect(() => {
+    if (!selectedProduct && searchProdQuery.length > 2) {
+      axios
+        .get(`${BASE_URL}/api/products?query=${searchProdQuery}`)
+        .then((res) => setSuggestions(res.data))
+        .catch((err) => console.error(err));
+    } else {
+      setSuggestions([]);
+    }
+  }, [searchProdQuery, selectedProduct, BASE_URL]);
+
+  // ---------- Category Filtering ----------
+  useEffect(() => {
+    if (!showCategoryDropdown) return;
+
+    if (categorySearch.length < 1) {
+      // show full list
+      setCategorySuggestions(allCategories);
+    } else {
+      // filter locally
+      const filtered = allCategories.filter((cat) =>
+        cat.name.toLowerCase().includes(categorySearch.toLowerCase())
+      );
+      setCategorySuggestions(filtered);
+    }
+  }, [categorySearch, allCategories, showCategoryDropdown]);
+
+  // ---------- Supplier Filtering ----------
+  useEffect(() => {
+    if (!showSupplierDropdown) return;
+
+    if (supplierSearch.length < 1) {
+      // show full list
+      setSupplierSuggestions(allSuppliers);
+    } else {
+      const filtered = allSuppliers.filter((sup) =>
+        sup.name.toLowerCase().includes(supplierSearch.toLowerCase())
+      );
+      setSupplierSuggestions(filtered);
+    }
+  }, [supplierSearch, allSuppliers, showSupplierDropdown]);
+
+  // ---------- Sync local states if product changes externally ----------
   useEffect(() => {
     if (selectedProduct) {
-      setFormData({
+      setFormData((prev) => ({
+        ...prev,
         name: selectedProduct.name || "",
         barCode: selectedProduct.barCode || "",
         description: selectedProduct.description || "",
-        mainSupplier: selectedProduct.mainSupplier || "",
         salesPrice: {
           price1: selectedProduct.salesPrice?.price1 || 0,
           price2: selectedProduct.salesPrice?.price2 || 0,
@@ -100,7 +188,7 @@ export default function EditProductModal({ product, onClose }) {
         height: selectedProduct.height || 0,
         weight: selectedProduct.weight || 0,
         volume: selectedProduct.volume || 0,
-        averagePurchasePrice: selectedProduct.averagePurchasePrice || 0,
+        averagePurchasePrice: selectedProduct.averagePurchasePrice || "",
         defaultMarkups: {
           markup1: selectedProduct.defaultMarkups?.markup1 || 0,
           markup2: selectedProduct.defaultMarkups?.markup2 || 0,
@@ -109,26 +197,34 @@ export default function EditProductModal({ product, onClose }) {
         clientMarkups: selectedProduct.clientMarkups
           ? JSON.stringify(selectedProduct.clientMarkups, null, 2)
           : "",
-      });
+      }));
+
+      // Also set selectedCategory & selectedSupplier states
+      if (selectedProduct.category) {
+        setSelectedCategory(selectedProduct.category);
+        setCategorySearch(selectedProduct.category.name || "");
+      } else {
+        setSelectedCategory({ _id: "", name: "" });
+        setCategorySearch("");
+      }
+
+      if (selectedProduct.mainSupplier) {
+        setSelectedSupplier(selectedProduct.mainSupplier);
+        setSupplierSearch(selectedProduct.mainSupplier.name || "");
+      } else {
+        setSelectedSupplier({ _id: "", name: "" });
+        setSupplierSearch("");
+      }
     }
   }, [selectedProduct]);
 
-  // Căutare de produse: folosim endpoint-ul existent (/api/products) cu parametrul query
   useEffect(() => {
-    if (!selectedProduct && searchQuery.length > 2) {
-      axios
-        .get(`${BASE_URL}/api/products/?query=${searchQuery}`)
-        .then((res) => {
-          setSuggestions(res.data);
-        })
-        .catch((err) => console.error(err));
-    } else {
-      setSuggestions([]);
-    }
-  }, [searchQuery, selectedProduct]);
+    setMounted(true);
+  }, []);
 
   if (!mounted) return null;
 
+  // ---------- Basic Form Handlers ----------
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name.includes(".")) {
@@ -148,25 +244,43 @@ export default function EditProductModal({ product, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = new FormData();
 
+    if (!selectedProduct) return; // No product selected
+
+    const data = new FormData();
     data.append("name", formData.name);
     data.append("barCode", formData.barCode);
     data.append("description", formData.description);
-    data.append("mainSupplier", formData.mainSupplier);
+
+    // category & supplier come from the dropdown states
+    data.append("category", selectedCategory._id);
+    data.append("mainSupplier", selectedSupplier._id);
+
+    // salesPrice
     data.append("salesPrice.price1", formData.salesPrice.price1);
     data.append("salesPrice.price2", formData.salesPrice.price2);
     data.append("salesPrice.price3", formData.salesPrice.price3);
+
+    // stock & dates
     data.append("minStock", formData.minStock);
     data.append("currentStock", formData.currentStock);
     data.append("firstOrderDate", formData.firstOrderDate);
     data.append("lastOrderDate", formData.lastOrderDate);
+
+    // dimensions & weight
     data.append("length", formData.length);
     data.append("width", formData.width);
     data.append("height", formData.height);
     data.append("weight", formData.weight);
     data.append("volume", formData.volume);
-    data.append("averagePurchasePrice", formData.averagePurchasePrice);
+
+    // purchase price
+    data.append(
+      "averagePurchasePrice",
+      Number(formData.averagePurchasePrice) || 0
+    );
+
+    // markups
     data.append("defaultMarkups.markup1", formData.defaultMarkups.markup1);
     data.append("defaultMarkups.markup2", formData.defaultMarkups.markup2);
     data.append("defaultMarkups.markup3", formData.defaultMarkups.markup3);
@@ -176,7 +290,6 @@ export default function EditProductModal({ product, onClose }) {
       data.append("images", img);
     });
 
-    // Folosim _id-ul produsului selectat
     axios
       .put(`${BASE_URL}/api/products/${selectedProduct._id}`, data)
       .then(() => {
@@ -187,18 +300,32 @@ export default function EditProductModal({ product, onClose }) {
       });
   };
 
+  // ---------- Category & Supplier Selectors ----------
+  const handleCategorySelect = (cat) => {
+    setSelectedCategory(cat);
+    setCategorySearch(cat.name);
+    setShowCategoryDropdown(false);
+  };
+
+  const handleSupplierSelect = (sup) => {
+    setSelectedSupplier(sup);
+    setSupplierSearch(sup.name);
+    setShowSupplierDropdown(false);
+  };
+
   return createPortal(
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <h2>Editează Produs</h2>
-        {/* Dacă nu avem un produs selectat, afișăm câmpul de căutare */}
+
+        {/* If no product is selected, show the product search input */}
         {!selectedProduct && (
           <div className={styles.searchBar}>
             <input
               type="text"
               placeholder="Caută produs pentru editare..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={searchProdQuery}
+              onChange={(e) => setSearchProdQuery(e.target.value)}
             />
             {suggestions.length > 0 && (
               <ul className={styles.suggestions}>
@@ -207,7 +334,7 @@ export default function EditProductModal({ product, onClose }) {
                     key={prod._id}
                     onClick={() => {
                       setSelectedProduct(prod);
-                      setSearchQuery("");
+                      setSearchProdQuery("");
                       setSuggestions([]);
                     }}
                   >
@@ -219,11 +346,11 @@ export default function EditProductModal({ product, onClose }) {
           </div>
         )}
 
-        {/* Dacă avem produsul selectat, afișăm formularul complet */}
+        {/* Once a product is selected, show the edit form */}
         {selectedProduct && (
           <form onSubmit={handleSubmit}>
             <div className={styles.columns}>
-              {/* Coloana stângă: imagine + descriere */}
+              {/* Left column: Image + Description */}
               <div className={styles.leftColumn}>
                 <div className={styles.imageUpload}>
                   <label>Imagine Produs:</label>
@@ -245,8 +372,10 @@ export default function EditProductModal({ product, onClose }) {
                   />
                 </div>
               </div>
-              {/* Coloana dreaptă: restul informațiilor */}
+
+              {/* Right column: 3-column grid for fields */}
               <div className={styles.rightColumn}>
+                {/* Name + BarCode */}
                 <div>
                   <label>Nume:</label>
                   <input
@@ -264,41 +393,92 @@ export default function EditProductModal({ product, onClose }) {
                     onChange={handleChange}
                   />
                 </div>
-                <div>
-                  <label>ID Furnizor:</label>
-                  <input
-                    name="mainSupplier"
-                    value={formData.mainSupplier}
-                    onChange={handleChange}
-                  />
+
+                {/* Category dropdown */}
+                <div className={styles.fieldWithDropdown}>
+                  <label>Categorie:</label>
+                  <div className={styles.inputRow}>
+                    <input
+                      type="text"
+                      placeholder="Caută categorie..."
+                      value={categorySearch || selectedCategory.name}
+                      onChange={(e) => {
+                        setCategorySearch(e.target.value);
+                        setShowCategoryDropdown(true);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className={styles.arrowBtn}
+                      onClick={() => setShowCategoryDropdown((prev) => !prev)}
+                    >
+                      ▼
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.plusBtn}
+                      onClick={() => alert("Modal adăugare categorie (TODO)")}
+                    >
+                      +
+                    </button>
+                  </div>
+                  {showCategoryDropdown && categorySuggestions.length > 0 && (
+                    <ul className={styles.suggestions}>
+                      {categorySuggestions.map((cat) => (
+                        <li
+                          key={cat._id}
+                          onClick={() => handleCategorySelect(cat)}
+                        >
+                          {cat.name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
-                <div>
-                  <label>Preț 1:</label>
-                  <input
-                    name="salesPrice.price1"
-                    type="number"
-                    value={formData.salesPrice.price1}
-                    onChange={handleChange}
-                  />
+
+                {/* Supplier dropdown */}
+                <div className={styles.fieldWithDropdown}>
+                  <label>Furnizor:</label>
+                  <div className={styles.inputRow}>
+                    <input
+                      type="text"
+                      placeholder="Caută furnizor..."
+                      value={supplierSearch || selectedSupplier.name}
+                      onChange={(e) => {
+                        setSupplierSearch(e.target.value);
+                        setShowSupplierDropdown(true);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className={styles.arrowBtn}
+                      onClick={() => setShowSupplierDropdown((prev) => !prev)}
+                    >
+                      ▼
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.plusBtn}
+                      onClick={() => alert("Modal adăugare furnizor (TODO)")}
+                    >
+                      +
+                    </button>
+                  </div>
+                  {showSupplierDropdown && supplierSuggestions.length > 0 && (
+                    <ul className={styles.suggestions}>
+                      {supplierSuggestions.map((sup) => (
+                        <li
+                          key={sup._id}
+                          onClick={() => handleSupplierSelect(sup)}
+                        >
+                          {sup.name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
-                <div>
-                  <label>Preț 2:</label>
-                  <input
-                    name="salesPrice.price2"
-                    type="number"
-                    value={formData.salesPrice.price2}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label>Preț 3:</label>
-                  <input
-                    name="salesPrice.price3"
-                    type="number"
-                    value={formData.salesPrice.price3}
-                    onChange={handleChange}
-                  />
-                </div>
+
+                {/* Stock fields */}
                 <div>
                   <label>Stoc minim:</label>
                   <input
@@ -309,7 +489,7 @@ export default function EditProductModal({ product, onClose }) {
                   />
                 </div>
                 <div>
-                  <label>Stoc curent:</label>
+                  <label>Stoc inițial:</label>
                   <input
                     name="currentStock"
                     type="number"
@@ -317,26 +497,10 @@ export default function EditProductModal({ product, onClose }) {
                     onChange={handleChange}
                   />
                 </div>
+
+                {/* Dimensions & Weight */}
                 <div>
-                  <label>Data primei comenzi:</label>
-                  <input
-                    name="firstOrderDate"
-                    type="date"
-                    value={formData.firstOrderDate}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label>Data ultimei comenzi:</label>
-                  <input
-                    name="lastOrderDate"
-                    type="date"
-                    value={formData.lastOrderDate}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label>Lungime:</label>
+                  <label>Lungime (cm):</label>
                   <input
                     name="length"
                     type="number"
@@ -345,7 +509,7 @@ export default function EditProductModal({ product, onClose }) {
                   />
                 </div>
                 <div>
-                  <label>Lățime:</label>
+                  <label>Lățime (cm):</label>
                   <input
                     name="width"
                     type="number"
@@ -354,7 +518,7 @@ export default function EditProductModal({ product, onClose }) {
                   />
                 </div>
                 <div>
-                  <label>Înălțime:</label>
+                  <label>Înălțime (cm):</label>
                   <input
                     name="height"
                     type="number"
@@ -363,7 +527,7 @@ export default function EditProductModal({ product, onClose }) {
                   />
                 </div>
                 <div>
-                  <label>Greutate:</label>
+                  <label>Greutate (kg):</label>
                   <input
                     name="weight"
                     type="number"
@@ -371,17 +535,10 @@ export default function EditProductModal({ product, onClose }) {
                     onChange={handleChange}
                   />
                 </div>
+
+                {/* Purchase Price */}
                 <div>
-                  <label>Volum:</label>
-                  <input
-                    name="volume"
-                    type="number"
-                    value={formData.volume}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label>Preț mediu de achiziție:</label>
+                  <label>Preț mediu de achiziție (Lei):</label>
                   <input
                     name="averagePurchasePrice"
                     type="number"
@@ -389,43 +546,9 @@ export default function EditProductModal({ product, onClose }) {
                     onChange={handleChange}
                   />
                 </div>
-                <div>
-                  <label>Marjă implicită 1:</label>
-                  <input
-                    name="defaultMarkups.markup1"
-                    type="number"
-                    value={formData.defaultMarkups.markup1}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label>Marjă implicită 2:</label>
-                  <input
-                    name="defaultMarkups.markup2"
-                    type="number"
-                    value={formData.defaultMarkups.markup2}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label>Marjă implicită 3:</label>
-                  <input
-                    name="defaultMarkups.markup3"
-                    type="number"
-                    value={formData.defaultMarkups.markup3}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label>Markup personalizat per client (JSON):</label>
-                  <textarea
-                    name="clientMarkups"
-                    value={formData.clientMarkups}
-                    onChange={handleChange}
-                  />
-                </div>
               </div>
             </div>
+
             <div className={styles.buttons}>
               <button type="submit" className={styles.button}>
                 Salvează Modificările

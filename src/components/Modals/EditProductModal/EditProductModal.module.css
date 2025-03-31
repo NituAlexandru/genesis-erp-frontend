@@ -20,17 +20,6 @@
   position: relative;
 }
 
-/* Butonul de închidere (X) în colțul din dreapta sus */
-.closeBtn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-}
-
 /* Structura în două coloane pentru conținutul modalului */
 .columns {
   display: flex;
@@ -41,14 +30,13 @@
 /* Coloana stângă: pentru imagine și descriere */
 .leftColumn {
   flex: 1;
-  min-width: 300px;
+  max-width: 300px;
 }
 
-/* Containerul imaginii: dimensiuni fixe (300px x 300px) */
+/* Containerul imaginii */
 .leftColumn .imageContainer {
   width: 300px;
   height: 300px;
-  margin: 0 auto 10px auto;
   border: 1px dashed #ccc;
   display: flex;
   align-items: center;
@@ -62,20 +50,25 @@
   height: 100%;
   object-fit: contain;
 }
-
-/* Zona pentru descriere, fixă la 300px lățime, ca și imaginea */
+.imageUpload input {
+  width: 100%;
+  margin-bottom: 10px;
+}
+/* Zona pentru descriere*/
 .leftColumn .descriptionPreview {
   width: 300px;
+  height: 300px;
   margin: 0 auto;
 }
 
 .leftColumn .descriptionPreview textarea {
   width: 100%;
-  height: 100px;
+  height: 100%;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
   resize: vertical;
+  margin-top: 10px;
 }
 
 /* Coloana dreaptă: grid cu 3 coloane pentru câmpurile formularului */
@@ -117,20 +110,6 @@
   justify-content: flex-end;
 }
 
-/* Stil pentru butoane */
-.button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  background-color: #0070f3;
-  color: #fff;
-  cursor: pointer;
-}
-
-.button:hover {
-  background-color: #005bb5;
-}
-
 /* Stilizare pentru bara de căutare și sugestii în modalul de ștergere */
 .searchBar {
   position: relative;
@@ -143,23 +122,47 @@
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+/* --- Dropdown Field Styles --- */
+.fieldWithDropdown {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+/* A row that contains the input field, the arrow button, and the plus button */
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Arrow Button (to toggle dropdown) */
+.arrowBtn,
+.plusBtn {
+  width: 30px;
+  height: 30px;
+  font-size: 900;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .suggestions {
   position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
   background: #fff;
-  border: 1px solid #ccc;
-  border-top: none;
-  z-index: 10;
+  border: 1px solid #949494;
+  border-radius: 4px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 99;
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0;
+  list-style: none;
 }
-
 .suggestions li {
   padding: 8px;
   cursor: pointer;
 }
-
 .suggestions li:hover {
   background: #f0f0f0;
 }
