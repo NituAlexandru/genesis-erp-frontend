@@ -4,7 +4,7 @@ import React from "react";
 import styles from "./ProductTable.module.css";
 
 export default function ProductTable({ products, onProductClick }) {
-  // Utility function to calculate sale price: salePrice = averagePurchasePrice * (1 + markup/100)
+  // Utility function to calculate sale price
   const calculateSalePrice = (avgPrice, markup) => {
     if (avgPrice == null) return "N/A";
     return (avgPrice * (1 + markup / 100)).toFixed(2) + " Lei";
@@ -40,6 +40,7 @@ export default function ProductTable({ products, onProductClick }) {
             avgPrice != null
               ? calculateSalePrice(avgPrice, prod.defaultMarkups?.markup3 || 0)
               : "N/A";
+
           return (
             <tr key={prod._id}>
               <td>{prod.barCode || "N/A"}</td>
@@ -50,7 +51,7 @@ export default function ProductTable({ products, onProductClick }) {
                 {prod.name}
               </td>
               <td>{prod.mainSupplier?.name || "N/A"}</td>
-              <td>{prod.category || "N/A"}</td>
+              <td>{prod.category?.name || "N/A"}</td>
               <td className={styles.colPrice1}>{salePrice1}</td>
               <td className={styles.colPrice2}>{salePrice2}</td>
               <td className={styles.colPrice3}>{salePrice3}</td>

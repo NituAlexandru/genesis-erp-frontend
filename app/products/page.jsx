@@ -12,12 +12,11 @@ import ProductActions from "@/components/ProductsComponents/ProductActions/Produ
 import styles from "./ProductsPage.module.css";
 
 export default function ProductsPage() {
-  const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-  const { products, categories, suppliers, refetchProducts } =
-    useProducts(BASE_URL);
+  const { products, categories, suppliers, refetchProducts } = useProducts();
 
   // Filtre
   const [searchTerm, setSearchTerm] = useState("");
+  // Pentru filtrare, folosim _id-uri pentru category și supplier (din dropdown)
   const [categoryFilter, setCategoryFilter] = useState("");
   const [supplierFilter, setSupplierFilter] = useState("");
   const [minPrice, setMinPrice] = useState("");
@@ -32,22 +31,56 @@ export default function ProductsPage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  // console.log("DEBUG ProductsPage -> products:", products);
+  // console.log("DEBUG ProductsPage -> categories:", categories);
+  // console.log("DEBUG ProductsPage -> suppliers:", suppliers);
+
   // Filtrare locală cu useMemo
   const filteredProducts = useMemo(() => {
     return products.filter((prod) => {
+      // Filtru după nume (searchTerm)
       const matchesSearch = prod.name
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
+
+      // Filtru pentru categorie:
+      // Dacă prod.category e un obiect, extragem name; dacă e string, îl folosim direct.
+      let prodCategoryName = "";
+      if (prod.category) {
+        if (typeof prod.category === "object") {
+          prodCategoryName = prod.category.name;
+        } else {
+          prodCategoryName = prod.category;
+        }
+      }
       const matchesCategory = categoryFilter
-        ? prod.category === categoryFilter
+        ? (() => {
+            // Caută categoria selectată în array-ul categories (care sunt obiecte { _id, name })
+            const selectedCat = categories.find(
+              (c) => c._id === categoryFilter
+            );
+            if (!selectedCat) return false;
+            // Compara numele (case insensitive)
+            return (
+              prodCategoryName.toLowerCase() === selectedCat.name.toLowerCase()
+            );
+          })()
         : true;
+
+      // Filtru pentru furnizor:
+      // Se compară _id-ul populat pentru mainSupplier.
       const matchesSupplier = supplierFilter
-        ? prod.mainSupplier?.name === supplierFilter
+        ? prod.mainSupplier && prod.mainSupplier._id === supplierFilter
         : true;
-      const price = prod.price || 0;
+
+      // Filtru pentru preț
+      const price = prod.salesPrice ? prod.salesPrice.price1 : 0;
       const aboveMin = minPrice ? price >= parseFloat(minPrice) : true;
       const belowMax = maxPrice ? price <= parseFloat(maxPrice) : true;
+
+      // Filtru pentru stoc
       const isInStock = inStockOnly ? prod.currentStock > 0 : true;
+
       return (
         matchesSearch &&
         matchesCategory &&
@@ -61,6 +94,7 @@ export default function ProductsPage() {
     products,
     searchTerm,
     categoryFilter,
+    categories,
     supplierFilter,
     minPrice,
     maxPrice,
@@ -104,16 +138,8 @@ export default function ProductsPage() {
         setMaxPrice={setMaxPrice}
         inStockOnly={inStockOnly}
         setInStockOnly={setInStockOnly}
-        resetFilters={() => {
-          setSearchTerm("");
-          setCategoryFilter("");
-          setSupplierFilter("");
-          setMinPrice("");
-          setMaxPrice("");
-          setInStockOnly(false);
-        }}
-        categories={categories}
-        suppliers={suppliers}
+        categories={categories} // array de obiecte { _id, name }
+        suppliers={suppliers} // array de obiecte { _id, name }
       />
 
       {/* Tabelul de produse */}
@@ -137,6 +163,8 @@ export default function ProductsPage() {
             setShowAddModal(false);
             refetchProducts();
           }}
+          categories={categories}
+          suppliers={suppliers}
         />
       )}
 

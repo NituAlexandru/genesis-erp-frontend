@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import styles from "./ProductFilterBar.module.css";
 
@@ -16,9 +15,12 @@ export default function ProductFilterBar({
   setMaxPrice,
   inStockOnly,
   setInStockOnly,
-  categories,
-  suppliers,
+  categories = [],
+  suppliers = [],
 }) {
+  // console.log("DEBUG ProductFilterBar -> categories:", categories);
+  // console.log("DEBUG ProductFilterBar -> suppliers:", suppliers);
+
   return (
     <div className={styles.filters}>
       <input
@@ -36,8 +38,8 @@ export default function ProductFilterBar({
       >
         <option value="">Toate categoriile</option>
         {categories.map((cat) => (
-          <option key={cat} value={cat}>
-            {cat}
+          <option key={cat._id} value={cat._id}>
+            {cat.name}
           </option>
         ))}
       </select>
@@ -49,8 +51,8 @@ export default function ProductFilterBar({
       >
         <option value="">Toti furnizorii</option>
         {suppliers.map((sup) => (
-          <option key={sup} value={sup}>
-            {sup}
+          <option key={sup._id} value={sup._id}>
+            {sup.name}
           </option>
         ))}
       </select>
