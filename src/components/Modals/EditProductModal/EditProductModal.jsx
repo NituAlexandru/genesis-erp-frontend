@@ -8,20 +8,20 @@ import styles from "./EditProductModal.module.css";
 export default function EditProductModal({ product, onClose }) {
   const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-  // If a product is provided, we skip the search step
+  // Dacă se furnizează un produs, se sare peste pasul de căutare
   const [selectedProduct, setSelectedProduct] = useState(product || null);
   const [mounted, setMounted] = useState(false);
   const [images, setImages] = useState([]);
 
-  // For searching products if none is selected
+  // Pentru căutarea produselor (dacă nu a fost selectat niciunul)
   const [searchProdQuery, setSearchProdQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
-  // ---------- Full Lists for Category & Supplier (for dropdowns) ----------
+  // Liste complete pentru dropdown-urile de categorie și furnizor
   const [allCategories, setAllCategories] = useState([]);
   const [allSuppliers, setAllSuppliers] = useState([]);
 
-  // ---------- Category Dropdown State ----------
+  // Stare pentru dropdown-ul de categorie
   const [categorySearch, setCategorySearch] = useState("");
   const [categorySuggestions, setCategorySuggestions] = useState([]);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
@@ -29,7 +29,7 @@ export default function EditProductModal({ product, onClose }) {
     product?.category || { _id: "", name: "" }
   );
 
-  // ---------- Supplier Dropdown State ----------
+  // Stare pentru dropdown-ul de furnizor
   const [supplierSearch, setSupplierSearch] = useState("");
   const [supplierSuggestions, setSupplierSuggestions] = useState([]);
   const [showSupplierDropdown, setShowSupplierDropdown] = useState(false);
@@ -37,76 +37,49 @@ export default function EditProductModal({ product, onClose }) {
     product?.mainSupplier || { _id: "", name: "" }
   );
 
-  // ---------- Form Data (mirroring AddProductModal fields) ----------
+  // Structura de date – aceeași ca în AddProductModal
   const [formData, setFormData] = useState(
     selectedProduct
       ? {
-          // Basic fields
           name: selectedProduct.name || "",
           barCode: selectedProduct.barCode || "",
           description: selectedProduct.description || "",
-
-          // For editing the final output, we rely on selectedCategory / selectedSupplier
-          // in the dropdown states for category & supplier
-
-          // Sales Price fields
-          salesPrice: {
-            price1: selectedProduct.salesPrice?.price1 || 0,
-            price2: selectedProduct.salesPrice?.price2 || 0,
-            price3: selectedProduct.salesPrice?.price3 || 0,
-          },
-
-          // Stock & date fields
           minStock: selectedProduct.minStock || 0,
           currentStock: selectedProduct.currentStock || 0,
-          firstOrderDate: selectedProduct.firstOrderDate
-            ? selectedProduct.firstOrderDate.split("T")[0]
-            : "",
-          lastOrderDate: selectedProduct.lastOrderDate
-            ? selectedProduct.lastOrderDate.split("T")[0]
-            : "",
-
-          // Dimensions & weight
           length: selectedProduct.length || 0,
           width: selectedProduct.width || 0,
           height: selectedProduct.height || 0,
           weight: selectedProduct.weight || 0,
-          volume: selectedProduct.volume || 0,
-
-          // Purchase price
           averagePurchasePrice: selectedProduct.averagePurchasePrice || "",
-
-          // Markups
-          defaultMarkups: {
-            markup1: selectedProduct.defaultMarkups?.markup1 || 0,
-            markup2: selectedProduct.defaultMarkups?.markup2 || 0,
-            markup3: selectedProduct.defaultMarkups?.markup3 || 0,
+          packaging: {
+            itemsPerBox: selectedProduct.packaging?.itemsPerBox || 0,
+            boxesPerPallet: selectedProduct.packaging?.boxesPerPallet || 0,
+            itemsPerPallet: selectedProduct.packaging?.itemsPerPallet || 0,
+            maxPalletsPerTruck:
+              selectedProduct.packaging?.maxPalletsPerTruck || 0,
           },
-          clientMarkups: selectedProduct.clientMarkups
-            ? JSON.stringify(selectedProduct.clientMarkups, null, 2)
-            : "",
         }
       : {
           name: "",
           barCode: "",
           description: "",
-          salesPrice: { price1: 0, price2: 0, price3: 0 },
           minStock: 0,
           currentStock: 0,
-          firstOrderDate: "",
-          lastOrderDate: "",
           length: 0,
           width: 0,
           height: 0,
           weight: 0,
-          volume: 0,
           averagePurchasePrice: "",
-          defaultMarkups: { markup1: 0, markup2: 0, markup3: 0 },
-          clientMarkups: "",
+          packaging: {
+            itemsPerBox: 0,
+            boxesPerPallet: 0,
+            itemsPerPallet: 0,
+            maxPalletsPerTruck: 0,
+          },
         }
   );
 
-  // ---------- Load All Categories & Suppliers on Mount ----------
+  // Încărcarea categoriilor și furnizorilor la montare
   useEffect(() => {
     axios
       .get(`${BASE_URL}/api/categories`)
@@ -119,7 +92,7 @@ export default function EditProductModal({ product, onClose }) {
       .catch((err) => console.error(err));
   }, [BASE_URL]);
 
-  // ---------- Product Search (if no product is selected) ----------
+  // Căutarea produsului (dacă nu este selectat niciun produs)
   useEffect(() => {
     if (!selectedProduct && searchProdQuery.length > 2) {
       axios
@@ -131,15 +104,13 @@ export default function EditProductModal({ product, onClose }) {
     }
   }, [searchProdQuery, selectedProduct, BASE_URL]);
 
-  // ---------- Category Filtering ----------
+  // Filtrare pentru categorie
   useEffect(() => {
     if (!showCategoryDropdown) return;
 
     if (categorySearch.length < 1) {
-      // show full list
       setCategorySuggestions(allCategories);
     } else {
-      // filter locally
       const filtered = allCategories.filter((cat) =>
         cat.name.toLowerCase().includes(categorySearch.toLowerCase())
       );
@@ -147,12 +118,11 @@ export default function EditProductModal({ product, onClose }) {
     }
   }, [categorySearch, allCategories, showCategoryDropdown]);
 
-  // ---------- Supplier Filtering ----------
+  // Filtrare pentru furnizor
   useEffect(() => {
     if (!showSupplierDropdown) return;
 
     if (supplierSearch.length < 1) {
-      // show full list
       setSupplierSuggestions(allSuppliers);
     } else {
       const filtered = allSuppliers.filter((sup) =>
@@ -162,7 +132,7 @@ export default function EditProductModal({ product, onClose }) {
     }
   }, [supplierSearch, allSuppliers, showSupplierDropdown]);
 
-  // ---------- Sync local states if product changes externally ----------
+  // Sincronizare a stărilor locale dacă produsul se modifică extern
   useEffect(() => {
     if (selectedProduct) {
       setFormData((prev) => ({
@@ -170,36 +140,22 @@ export default function EditProductModal({ product, onClose }) {
         name: selectedProduct.name || "",
         barCode: selectedProduct.barCode || "",
         description: selectedProduct.description || "",
-        salesPrice: {
-          price1: selectedProduct.salesPrice?.price1 || 0,
-          price2: selectedProduct.salesPrice?.price2 || 0,
-          price3: selectedProduct.salesPrice?.price3 || 0,
-        },
         minStock: selectedProduct.minStock || 0,
         currentStock: selectedProduct.currentStock || 0,
-        firstOrderDate: selectedProduct.firstOrderDate
-          ? selectedProduct.firstOrderDate.split("T")[0]
-          : "",
-        lastOrderDate: selectedProduct.lastOrderDate
-          ? selectedProduct.lastOrderDate.split("T")[0]
-          : "",
         length: selectedProduct.length || 0,
         width: selectedProduct.width || 0,
         height: selectedProduct.height || 0,
         weight: selectedProduct.weight || 0,
-        volume: selectedProduct.volume || 0,
         averagePurchasePrice: selectedProduct.averagePurchasePrice || "",
-        defaultMarkups: {
-          markup1: selectedProduct.defaultMarkups?.markup1 || 0,
-          markup2: selectedProduct.defaultMarkups?.markup2 || 0,
-          markup3: selectedProduct.defaultMarkups?.markup3 || 0,
+        packaging: {
+          itemsPerBox: selectedProduct.packaging?.itemsPerBox || 0,
+          boxesPerPallet: selectedProduct.packaging?.boxesPerPallet || 0,
+          itemsPerPallet: selectedProduct.packaging?.itemsPerPallet || 0,
+          maxPalletsPerTruck:
+            selectedProduct.packaging?.maxPalletsPerTruck || 0,
         },
-        clientMarkups: selectedProduct.clientMarkups
-          ? JSON.stringify(selectedProduct.clientMarkups, null, 2)
-          : "",
       }));
 
-      // Also set selectedCategory & selectedSupplier states
       if (selectedProduct.category) {
         setSelectedCategory(selectedProduct.category);
         setCategorySearch(selectedProduct.category.name || "");
@@ -224,7 +180,7 @@ export default function EditProductModal({ product, onClose }) {
 
   if (!mounted) return null;
 
-  // ---------- Basic Form Handlers ----------
+  // Handlere pentru modificarea câmpurilor formularului
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name.includes(".")) {
@@ -245,46 +201,33 @@ export default function EditProductModal({ product, onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!selectedProduct) return; // No product selected
+    if (!selectedProduct) return;
 
     const data = new FormData();
     data.append("name", formData.name);
     data.append("barCode", formData.barCode);
     data.append("description", formData.description);
-
-    // category & supplier come from the dropdown states
-    data.append("category", selectedCategory._id);
-    data.append("mainSupplier", selectedSupplier._id);
-
-    // salesPrice
-    data.append("salesPrice.price1", formData.salesPrice.price1);
-    data.append("salesPrice.price2", formData.salesPrice.price2);
-    data.append("salesPrice.price3", formData.salesPrice.price3);
-
-    // stock & dates
     data.append("minStock", formData.minStock);
     data.append("currentStock", formData.currentStock);
-    data.append("firstOrderDate", formData.firstOrderDate);
-    data.append("lastOrderDate", formData.lastOrderDate);
-
-    // dimensions & weight
     data.append("length", formData.length);
     data.append("width", formData.width);
     data.append("height", formData.height);
     data.append("weight", formData.weight);
-    data.append("volume", formData.volume);
-
-    // purchase price
     data.append(
       "averagePurchasePrice",
       Number(formData.averagePurchasePrice) || 0
     );
 
-    // markups
-    data.append("defaultMarkups.markup1", formData.defaultMarkups.markup1);
-    data.append("defaultMarkups.markup2", formData.defaultMarkups.markup2);
-    data.append("defaultMarkups.markup3", formData.defaultMarkups.markup3);
-    data.append("clientMarkups", formData.clientMarkups);
+    data.append("packaging.itemsPerBox", formData.packaging.itemsPerBox);
+    data.append("packaging.boxesPerPallet", formData.packaging.boxesPerPallet);
+    data.append("packaging.itemsPerPallet", formData.packaging.itemsPerPallet);
+    data.append(
+      "packaging.maxPalletsPerTruck",
+      formData.packaging.maxPalletsPerTruck
+    );
+
+    data.append("category", selectedCategory._id);
+    data.append("mainSupplier", selectedSupplier._id);
 
     images.forEach((img) => {
       data.append("images", img);
@@ -295,18 +238,17 @@ export default function EditProductModal({ product, onClose }) {
       .then(() => {
         onClose();
       })
-      .catch((err) => {
-        console.error(err);
-      });
+      .catch((err) => console.error(err));
   };
 
-  // ---------- Category & Supplier Selectors ----------
+  // Selectarea categoriei
   const handleCategorySelect = (cat) => {
     setSelectedCategory(cat);
     setCategorySearch(cat.name);
     setShowCategoryDropdown(false);
   };
 
+  // Selectarea furnizorului
   const handleSupplierSelect = (sup) => {
     setSelectedSupplier(sup);
     setSupplierSearch(sup.name);
@@ -318,7 +260,7 @@ export default function EditProductModal({ product, onClose }) {
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <h2>Editează Produs</h2>
 
-        {/* If no product is selected, show the product search input */}
+        {/* Dacă nu e selectat niciun produs, se afișează input-ul de căutare */}
         {!selectedProduct && (
           <div className={styles.searchBar}>
             <input
@@ -346,11 +288,10 @@ export default function EditProductModal({ product, onClose }) {
           </div>
         )}
 
-        {/* Once a product is selected, show the edit form */}
         {selectedProduct && (
           <form onSubmit={handleSubmit}>
             <div className={styles.columns}>
-              {/* Left column: Image + Description */}
+              {/* Coloana stângă: imagine + descriere */}
               <div className={styles.leftColumn}>
                 <div className={styles.imageUpload}>
                   <label>Imagine Produs:</label>
@@ -373,9 +314,8 @@ export default function EditProductModal({ product, onClose }) {
                 </div>
               </div>
 
-              {/* Right column: 3-column grid for fields */}
+              {/* Coloana dreaptă: câmpuri pentru formular */}
               <div className={styles.rightColumn}>
-                {/* Name + BarCode */}
                 <div>
                   <label>Nume:</label>
                   <input
@@ -394,7 +334,7 @@ export default function EditProductModal({ product, onClose }) {
                   />
                 </div>
 
-                {/* Category dropdown */}
+                {/* Dropdown pentru categorie */}
                 <div className={styles.fieldWithDropdown}>
                   <label>Categorie:</label>
                   <div className={styles.inputRow}>
@@ -436,7 +376,7 @@ export default function EditProductModal({ product, onClose }) {
                   )}
                 </div>
 
-                {/* Supplier dropdown */}
+                {/* Dropdown pentru furnizor */}
                 <div className={styles.fieldWithDropdown}>
                   <label>Furnizor:</label>
                   <div className={styles.inputRow}>
@@ -478,7 +418,6 @@ export default function EditProductModal({ product, onClose }) {
                   )}
                 </div>
 
-                {/* Stock fields */}
                 <div>
                   <label>Stoc minim:</label>
                   <input
@@ -497,8 +436,6 @@ export default function EditProductModal({ product, onClose }) {
                     onChange={handleChange}
                   />
                 </div>
-
-                {/* Dimensions & Weight */}
                 <div>
                   <label>Lungime (cm):</label>
                   <input
@@ -535,14 +472,50 @@ export default function EditProductModal({ product, onClose }) {
                     onChange={handleChange}
                   />
                 </div>
-
-                {/* Purchase Price */}
                 <div>
-                  <label>Preț mediu de achiziție (Lei):</label>
+                  <label>Preț intrare pe bucata (Lei):</label>
                   <input
                     name="averagePurchasePrice"
                     type="number"
                     value={formData.averagePurchasePrice}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                {/* Câmpurile pentru packaging */}
+                <div>
+                  <label>Nr. produse în pachet:</label>
+                  <input
+                    name="packaging.itemsPerBox"
+                    type="number"
+                    value={formData.packaging.itemsPerBox}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label>Nr. pachete pe palet:</label>
+                  <input
+                    name="packaging.boxesPerPallet"
+                    type="number"
+                    value={formData.packaging.boxesPerPallet}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label>Nr. produse pe palet:</label>
+                  <input
+                    name="packaging.itemsPerPallet"
+                    type="number"
+                    value={formData.packaging.itemsPerPallet}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label>Nr. paleti max pe tir:</label>
+                  <input
+                    name="packaging.maxPalletsPerTruck"
+                    type="number"
+                    value={formData.packaging.maxPalletsPerTruck}
                     onChange={handleChange}
                   />
                 </div>
