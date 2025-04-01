@@ -26,7 +26,7 @@
   min-width: 300px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  gap: 70px;
   row-gap: 0;
   grid-auto-rows: 35px;
   font-weight: 600;
@@ -36,6 +36,7 @@
 .columns {
   display: flex;
   gap: 30px;
+  margin-top: 20px;
 }
 
 /* Coloana stângă: pentru imagine și descriere */
@@ -79,4 +80,15 @@
   position: absolute;
   bottom: 20px;
   right: 50px;
+}
+.barcodeContainer {
+  position: absolute;
+  right: 50%;
+  transform: translate(50%);
+  bottom: 0;
+  margin: 10px 0;
+  text-align: center;
+}
+.barcodeContainer svg {
+  height: 100px;
 }

@@ -2,6 +2,7 @@
 
 import { createPortal } from "react-dom";
 import { useState, useEffect } from "react";
+import Barcode from "react-barcode";
 import styles from "./ProductModal.module.css";
 
 export default function ProductModal({ product, onClose }) {
@@ -16,7 +17,7 @@ export default function ProductModal({ product, onClose }) {
   return createPortal(
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-        <h2>Detalii Produs</h2>
+        <h2>Detalii Produs</h2>{" "}
         <div className={styles.columns}>
           <div className={styles.leftColumn}>
             <div className={styles.imageContainer}>
@@ -31,9 +32,11 @@ export default function ProductModal({ product, onClose }) {
               <p>{product.description}</p>
             </div>
           </div>
+
           <div className={styles.rightColumn}>
             <p>Nume: {product.name}</p>
-            <p>Cod de bare: {product.barCode}</p>
+            <p>ID: {product.barCode}</p>
+
             <p>
               Furnizor:{" "}
               {product.mainSupplier?.name || product.mainSupplier || "-"}
@@ -50,18 +53,6 @@ export default function ProductModal({ product, onClose }) {
             <p>Stoc minim: {product.minStock.toFixed(0)}</p>
             <p>Stoc curent: {product.currentStock.toFixed(0)}</p>
             <p>
-              Dimensiuni (L x l x h): {product.length} x {product.width} x{" "}
-              {product.height}
-            </p>
-            <p>Greutate: {product.weight}</p>
-            <p>Volum: {product.volume} m3</p>
-            <p>Nr. produse în pachet: {product.packaging?.itemsPerBox}</p>
-            <p>Nr. pachete pe palet: {product.packaging?.boxesPerPallet}</p>
-            <p>Nr. produse pe palet: {product.packaging?.itemsPerPallet}</p>
-            <p>
-              Nr. paleti max pe tir: {product.packaging?.maxPalletsPerTruck}
-            </p>
-            <p>
               Data primei comenzi:{" "}
               {product.firstOrderDate
                 ? new Date(product.firstOrderDate).toLocaleDateString()
@@ -73,6 +64,24 @@ export default function ProductModal({ product, onClose }) {
                 ? new Date(product.lastOrderDate).toLocaleDateString()
                 : "-"}
             </p>
+            <p>
+              Dimensiuni (L x l x h): {product.length} x {product.width} x{" "}
+              {product.height}
+            </p>
+            <p>Greutate: {product.weight}</p>
+            <p>Volum: {product.volume} m3</p>
+            <p>
+              Markup personalizat per client:{" "}
+              {product.clientMarkups && product.clientMarkups.length > 0
+                ? JSON.stringify(product.clientMarkups)
+                : "N/A"}
+            </p>
+            <p>Nr. produse în pachet: {product.packaging?.itemsPerBox}</p>
+            <p>Nr. pachete pe palet: {product.packaging?.boxesPerPallet}</p>
+            <p>Nr. produse pe palet: {product.packaging?.itemsPerPallet}</p>
+            <p>
+              Nr. paleti max pe tir: {product.packaging?.maxPalletsPerTruck}
+            </p>
             {product.createdAt && (
               <p>Creat: {new Date(product.createdAt).toLocaleString()}</p>
             )}
@@ -80,6 +89,9 @@ export default function ProductModal({ product, onClose }) {
               <p>Actualizat: {new Date(product.updatedAt).toLocaleString()}</p>
             )}
             <p>Status: {product.isActive ? "Activ" : "Inactiv"}</p>
+            <div className={styles.barcodeContainer}>
+              <Barcode value={product.barCode} />
+            </div>
           </div>
         </div>
         <button onClick={onClose} className={styles.closeButton}>
