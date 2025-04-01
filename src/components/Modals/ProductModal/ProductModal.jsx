@@ -32,44 +32,54 @@ export default function ProductModal({ product, onClose }) {
             </div>
           </div>
           <div className={styles.rightColumn}>
+            <p>Nume: {product.name}</p>
+            <p>Cod de bare: {product.barCode}</p>
             <p>
-              <strong>Nume:</strong> {product.name}
+              Furnizor:{" "}
+              {product.mainSupplier?.name || product.mainSupplier || "-"}
             </p>
             <p>
-              <strong>ID</strong> {product.barCode}
+              Categorie: {product.category?.name || product.category || "-"}
+            </p>
+            <p>Preț achiziție: {product.averagePurchasePrice.toFixed(2)}</p>
+            <p>
+              Preț vanzare: {product.salesPrice?.price1.toFixed(2)} /{" "}
+              {product.salesPrice?.price2.toFixed(2)} /{" "}
+              {product.salesPrice?.price3.toFixed(2)} Lei
+            </p>
+            <p>Stoc minim: {product.minStock.toFixed(0)}</p>
+            <p>Stoc curent: {product.currentStock.toFixed(0)}</p>
+            <p>
+              Dimensiuni (L x l x h): {product.length} x {product.width} x{" "}
+              {product.height}
+            </p>
+            <p>Greutate: {product.weight}</p>
+            <p>Volum: {product.volume} m3</p>
+            <p>Nr. produse în pachet: {product.packaging?.itemsPerBox}</p>
+            <p>Nr. pachete pe palet: {product.packaging?.boxesPerPallet}</p>
+            <p>Nr. produse pe palet: {product.packaging?.itemsPerPallet}</p>
+            <p>
+              Nr. paleti max pe tir: {product.packaging?.maxPalletsPerTruck}
             </p>
             <p>
-              <strong>ID Furnizor:</strong>{" "}
-              {product.mainSupplier?.name || product.mainSupplier}
+              Data primei comenzi:{" "}
+              {product.firstOrderDate
+                ? new Date(product.firstOrderDate).toLocaleDateString()
+                : "-"}
             </p>
             <p>
-              <strong>Prețuri:</strong> {product.salesPrice?.price1} /{" "}
-              {product.salesPrice?.price2} / {product.salesPrice?.price3} Lei
+              Data ultimei comenzi:{" "}
+              {product.lastOrderDate
+                ? new Date(product.lastOrderDate).toLocaleDateString()
+                : "-"}
             </p>
-            <p>
-              <strong>Stoc minim:</strong> {product.minStock}
-            </p>
-            <p>
-              <strong>Stoc curent:</strong> {product.currentStock}
-            </p>
-            <p>
-              <strong>Data primei comenzi:</strong>{" "}
-              {new Date(product.firstOrderDate).toLocaleDateString()}
-            </p>
-            <p>
-              <strong>Data ultimei comenzi:</strong>{" "}
-              {new Date(product.lastOrderDate).toLocaleDateString()}
-            </p>
-            <p>
-              <strong>Dimensiuni (L x l x h):</strong> {product.length} x{" "}
-              {product.width} x {product.height}
-            </p>
-            <p>
-              <strong>Greutate:</strong> {product.weight}
-            </p>
-            <p>
-              <strong>Volum:</strong> {product.volume}
-            </p>
+            {product.createdAt && (
+              <p>Creat: {new Date(product.createdAt).toLocaleString()}</p>
+            )}
+            {product.updatedAt && (
+              <p>Actualizat: {new Date(product.updatedAt).toLocaleString()}</p>
+            )}
+            <p>Status: {product.isActive ? "Activ" : "Inactiv"}</p>
           </div>
         </div>
         <button onClick={onClose} className={styles.closeButton}>
