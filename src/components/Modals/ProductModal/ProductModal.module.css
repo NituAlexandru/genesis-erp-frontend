@@ -29,6 +29,7 @@
   gap: 40px;
   row-gap: 0;
   grid-auto-rows: 35px;
+  font-weight: 600;
 }
 
 /* Structura în două coloane pentru conținutul modalului */
