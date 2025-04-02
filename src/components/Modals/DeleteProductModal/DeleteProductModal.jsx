@@ -82,32 +82,73 @@ export default function DeleteProductModal({ onClose }) {
                   </div>
                 </div>
                 <div className={styles.rightColumn}>
+                  <p>Nume: {selectedProduct.name}</p>
+                  <p>ID: {selectedProduct.barCode}</p>
                   <p>
-                    <strong>Nume:</strong> {selectedProduct.name}
-                  </p>
-                  <p>
-                    <strong>Cod de bare:</strong> {selectedProduct.barCode}
-                  </p>
-                  <p>
-                    <strong>ID Furnizor:</strong>{" "}
+                    Furnizor:{" "}
                     {selectedProduct.mainSupplier?.name ||
                       selectedProduct.mainSupplier ||
                       "-"}
                   </p>
                   <p>
-                    <strong>Prețuri:</strong>{" "}
-                    {selectedProduct.salesPrice?.price1} /{" "}
-                    {selectedProduct.salesPrice?.price2} /{" "}
-                    {selectedProduct.salesPrice?.price3} Lei
+                    Categorie:{" "}
+                    {selectedProduct.category?.name ||
+                      selectedProduct.category ||
+                      "-"}
                   </p>
                   <p>
-                    <strong>Stoc minim:</strong> {selectedProduct.minStock}
+                    Preț achiziție:{" "}
+                    {Number(selectedProduct.averagePurchasePrice).toFixed(2)}
                   </p>
                   <p>
-                    <strong>Stoc curent:</strong> {selectedProduct.currentStock}
+                    Preț vanzare:{" "}
+                    {Number(selectedProduct.salesPrice?.price1).toFixed(2)} /{" "}
+                    {Number(selectedProduct.salesPrice?.price2).toFixed(2)} /{" "}
+                    {Number(selectedProduct.salesPrice?.price3).toFixed(2)} Lei
                   </p>
                   <p>
-                    <strong>Data primei comenzi:</strong>{" "}
+                    Stoc minim: {Number(selectedProduct.minStock).toFixed(0)}
+                  </p>
+                  <p>
+                    Stoc curent:{" "}
+                    {Number(selectedProduct.currentStock).toFixed(0)}
+                  </p>
+                  <p>
+                    Dimensiuni (L x l x h): {selectedProduct.length} x{" "}
+                    {selectedProduct.width} x {selectedProduct.height}
+                  </p>
+                  <p>Greutate: {selectedProduct.weight}</p>
+                  <p>Volum: {selectedProduct.volume} m3</p>
+                  <p>
+                    Nr. produse în pachet:{" "}
+                    {selectedProduct.packaging?.itemsPerBox}
+                  </p>
+                  <p>
+                    Nr. pachete pe palet:{" "}
+                    {selectedProduct.packaging?.boxesPerPallet}
+                  </p>
+                  <p>
+                    Nr. produse pe palet:{" "}
+                    {selectedProduct.packaging?.itemsPerPallet}
+                  </p>
+                  <p>
+                    Nr. paleti max pe tir:{" "}
+                    {selectedProduct.packaging?.maxPalletsPerTruck}
+                  </p>
+                  {selectedProduct.createdAt && (
+                    <p>
+                      Creat:{" "}
+                      {new Date(selectedProduct.createdAt).toLocaleString()}
+                    </p>
+                  )}
+                  {selectedProduct.updatedAt && (
+                    <p>
+                      Actualizat:{" "}
+                      {new Date(selectedProduct.updatedAt).toLocaleString()}
+                    </p>
+                  )}
+                  <p>
+                    Data primei comenzi:{" "}
                     {selectedProduct.firstOrderDate
                       ? new Date(
                           selectedProduct.firstOrderDate
@@ -115,7 +156,7 @@ export default function DeleteProductModal({ onClose }) {
                       : "-"}
                   </p>
                   <p>
-                    <strong>Data ultimei comenzi:</strong>{" "}
+                    Data ultimei comenzi:{" "}
                     {selectedProduct.lastOrderDate
                       ? new Date(
                           selectedProduct.lastOrderDate
@@ -123,41 +164,22 @@ export default function DeleteProductModal({ onClose }) {
                       : "-"}
                   </p>
                   <p>
-                    <strong>Dimensiuni (L x l x h):</strong>{" "}
-                    {selectedProduct.length} x {selectedProduct.width} x{" "}
-                    {selectedProduct.height}
+                    Status: {selectedProduct.isActive ? "Activ" : "Inactiv"}
                   </p>
-                  <p>
-                    <strong>Greutate:</strong> {selectedProduct.weight}
-                  </p>
-                  <p>
-                    <strong>Volum:</strong> {selectedProduct.volume}
-                  </p>
-                  <p>
-                    <strong>Preț mediu de achiziție:</strong>{" "}
-                    {selectedProduct.averagePurchasePrice}
-                  </p>
-                  <p>
-                    <strong>Marje implicite:</strong>{" "}
-                    {selectedProduct.defaultMarkups?.markup1} /{" "}
-                    {selectedProduct.defaultMarkups?.markup2} /{" "}
-                    {selectedProduct.defaultMarkups?.markup3}
-                  </p>
-                  <p>
-                    <strong>Markup personalizat per client:</strong>{" "}
-                    {JSON.stringify(selectedProduct.clientMarkups)}
-                  </p>
+                  <div className={styles.confirmationContainer}>
+                    {" "}
+                    <p>Ești sigur că vrei să ștergi acest produs?</p>
+                    <div className={styles.buttons}>
+                      <button onClick={handleDelete} className={styles.button}>
+                        Șterge Produs
+                      </button>
+                      <button onClick={onClose} className={styles.button}>
+                        Anulează
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <p>Ești sigur că vrei să ștergi acest produs?</p>
-            <div className={styles.buttons}>
-              <button onClick={handleDelete} className={styles.button}>
-                Șterge Produs
-              </button>
-              <button onClick={onClose} className={styles.button}>
-                Anulează
-              </button>
             </div>
           </div>
         </div>

@@ -14,37 +14,29 @@ import styles from "./ProductsPage.module.css";
 export default function ProductsPage() {
   const { products, categories, suppliers, refetchProducts } = useProducts();
 
-  // Filtre
+  // Filters
   const [searchTerm, setSearchTerm] = useState("");
-  // Pentru filtrare, folosim _id-uri pentru category și supplier (din dropdown)
   const [categoryFilter, setCategoryFilter] = useState("");
   const [supplierFilter, setSupplierFilter] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [inStockOnly, setInStockOnly] = useState(false);
 
-  // Produsul selectat pentru modalul de detalii
+  // Selected product for details modal.
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // State pentru modalele de CRUD
+  // State for CRUD modals.
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // console.log("DEBUG ProductsPage -> products:", products);
-  // console.log("DEBUG ProductsPage -> categories:", categories);
-  // console.log("DEBUG ProductsPage -> suppliers:", suppliers);
-
-  // Filtrare locală cu useMemo
+  // Local filtering with useMemo.
   const filteredProducts = useMemo(() => {
     return products.filter((prod) => {
-      // Filtru după nume (searchTerm)
       const matchesSearch = prod.name
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
 
-      // Filtru pentru categorie:
-      // Dacă prod.category e un obiect, extragem name; dacă e string, îl folosim direct.
       let prodCategoryName = "";
       if (prod.category) {
         if (typeof prod.category === "object") {
@@ -55,30 +47,24 @@ export default function ProductsPage() {
       }
       const matchesCategory = categoryFilter
         ? (() => {
-            // Caută categoria selectată în array-ul categories (care sunt obiecte { _id, name })
             const selectedCat = categories.find(
               (c) => c._id === categoryFilter
             );
             if (!selectedCat) return false;
-            // Compara numele (case insensitive)
             return (
               prodCategoryName.toLowerCase() === selectedCat.name.toLowerCase()
             );
           })()
         : true;
 
-      // Filtru pentru furnizor:
-      // Se compară _id-ul populat pentru mainSupplier.
       const matchesSupplier = supplierFilter
         ? prod.mainSupplier && prod.mainSupplier._id === supplierFilter
         : true;
 
-      // Filtru pentru preț
       const price = prod.salesPrice ? prod.salesPrice.price1 : 0;
       const aboveMin = minPrice ? price >= parseFloat(minPrice) : true;
       const belowMax = maxPrice ? price <= parseFloat(maxPrice) : true;
 
-      // Filtru pentru stoc
       const isInStock = inStockOnly ? prod.currentStock > 0 : true;
 
       return (
@@ -101,7 +87,7 @@ export default function ProductsPage() {
     inStockOnly,
   ]);
 
-  // Handler pentru modalul de detalii
+  // Handlers for modals.
   const handleProductClick = (prod) => setSelectedProduct(prod);
   const handleCloseProductModal = () => setSelectedProduct(null);
 
@@ -109,7 +95,6 @@ export default function ProductsPage() {
     <div className={styles.container}>
       <h2>Catalog Produse</h2>
 
-      {/* Zona de acțiuni: ProductActions */}
       <ProductActions
         onAdd={() => setShowAddModal(true)}
         onEdit={() => setShowEditModal(true)}
@@ -124,7 +109,6 @@ export default function ProductsPage() {
         }}
       />
 
-      {/* Zona de filtre */}
       <ProductFilterBar
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -138,17 +122,15 @@ export default function ProductsPage() {
         setMaxPrice={setMaxPrice}
         inStockOnly={inStockOnly}
         setInStockOnly={setInStockOnly}
-        categories={categories} // array de obiecte { _id, name }
-        suppliers={suppliers} // array de obiecte { _id, name }
+        categories={categories}
+        suppliers={suppliers}
       />
 
-      {/* Tabelul de produse */}
       <ProductTable
         products={filteredProducts}
         onProductClick={handleProductClick}
       />
 
-      {/* Modal pentru detalii */}
       {selectedProduct && (
         <ProductModal
           product={selectedProduct}
@@ -156,7 +138,6 @@ export default function ProductsPage() {
         />
       )}
 
-      {/* Modal pentru Add Product */}
       {showAddModal && (
         <AddProductModal
           onClose={() => {
@@ -168,7 +149,6 @@ export default function ProductsPage() {
         />
       )}
 
-      {/* Modal pentru Edit Product */}
       {showEditModal && (
         <EditProductModal
           onClose={() => {
@@ -178,7 +158,6 @@ export default function ProductsPage() {
         />
       )}
 
-      {/* Modal pentru Delete Product */}
       {showDeleteModal && (
         <DeleteProductModal
           onClose={() => {

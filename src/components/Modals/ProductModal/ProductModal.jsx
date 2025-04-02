@@ -32,7 +32,6 @@ export default function ProductModal({ product, onClose }) {
               <p>{product.description}</p>
             </div>
           </div>
-
           <div className={styles.rightColumn}>
             <p>Nume: {product.name}</p>
             <p>ID: {product.barCode}</p>
@@ -52,30 +51,13 @@ export default function ProductModal({ product, onClose }) {
             </p>
             <p>Stoc minim: {product.minStock.toFixed(0)}</p>
             <p>Stoc curent: {product.currentStock.toFixed(0)}</p>
-            <p>
-              Data primei comenzi:{" "}
-              {product.firstOrderDate
-                ? new Date(product.firstOrderDate).toLocaleDateString()
-                : "-"}
-            </p>
-            <p>
-              Data ultimei comenzi:{" "}
-              {product.lastOrderDate
-                ? new Date(product.lastOrderDate).toLocaleDateString()
-                : "-"}
-            </p>
+
             <p>
               Dimensiuni (L x l x h): {product.length} x {product.width} x{" "}
               {product.height}
             </p>
             <p>Greutate: {product.weight}</p>
             <p>Volum: {product.volume} m3</p>
-            <p>
-              Markup personalizat per client:{" "}
-              {product.clientMarkups && product.clientMarkups.length > 0
-                ? JSON.stringify(product.clientMarkups)
-                : "N/A"}
-            </p>
             <p>Nr. produse în pachet: {product.packaging?.itemsPerBox}</p>
             <p>Nr. pachete pe palet: {product.packaging?.boxesPerPallet}</p>
             <p>Nr. produse pe palet: {product.packaging?.itemsPerPallet}</p>
@@ -88,12 +70,24 @@ export default function ProductModal({ product, onClose }) {
             {product.updatedAt && (
               <p>Actualizat: {new Date(product.updatedAt).toLocaleString()}</p>
             )}
+            <p>
+              Data primei comenzi:{" "}
+              {product.firstOrderDate
+                ? new Date(product.firstOrderDate).toLocaleDateString()
+                : "-"}
+            </p>
+            <p>
+              Data ultimei comenzi:{" "}
+              {product.lastOrderDate
+                ? new Date(product.lastOrderDate).toLocaleDateString()
+                : "-"}
+            </p>
             <p>Status: {product.isActive ? "Activ" : "Inactiv"}</p>
-            <div className={styles.barcodeContainer}>
-              <Barcode value={product.barCode} />
-            </div>
+          </div>{" "}
+          <div className={styles.barcodeContainer}>
+            <Barcode value={product.barCode} />
           </div>
-        </div>
+        </div>{" "}
         <button onClick={onClose} className={styles.closeButton}>
           Închide
         </button>

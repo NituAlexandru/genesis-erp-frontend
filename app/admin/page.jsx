@@ -45,7 +45,7 @@ export default function AdminPage() {
   const handleModalSuccess = (message) => {
     Notiflix.Notify.success(message);
   };
-
+  //
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Panou Admin</h2>

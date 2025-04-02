@@ -15,32 +15,20 @@
 .modalContent {
   background: #fff;
   padding: 20px;
-  width: 75vw;
+  width: 60vw;
   border-radius: 6px;
   position: relative;
-}
-
-/* Butonul de închidere (X) în colțul din dreapta sus */
-.closeBtn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
 }
 
 /* Structura în două coloane pentru conținutul modalului */
 .columns {
   display: flex;
   gap: 20px;
-  flex-wrap: wrap;
+  margin-top: 20px;
 }
 
 /* Coloana stângă: pentru imagine și descriere */
 .leftColumn {
-  flex: 1;
   min-width: 300px;
 }
 
@@ -48,7 +36,7 @@
 .leftColumn .imageContainer {
   width: 300px;
   height: 300px;
-  margin: 0 auto 10px auto;
+  margin: 0;
   border: 1px dashed #ccc;
   display: flex;
   align-items: center;
@@ -62,7 +50,14 @@
   height: 100%;
   object-fit: contain;
 }
-
+.description {
+  max-width: 300px;
+  width: 300px;
+  height: 200px;
+  overflow: hidden;
+  overflow-y: auto;
+  margin: 20px 0;
+}
 /* Zona pentru descriere, fixă la 300px lățime, ca și imaginea */
 .leftColumn .descriptionPreview {
   width: 300px;
@@ -80,34 +75,16 @@
 
 /* Coloana dreaptă: grid cu 3 coloane pentru câmpurile formularului */
 .rightColumn {
-  flex: 1;
   min-width: 300px;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  gap: 70px;
+  row-gap: 0;
+  grid-auto-rows: 35px;
+  font-weight: 600;
+  position: relative;
 }
 
-/* Gruparea câmpurilor din coloana dreaptă */
-.rightColumn .fieldGroup {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Stil pentru etichete */
-.rightColumn label {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-/* Stil pentru inputuri, textarea și select din coloana dreaptă */
-.rightColumn input,
-.rightColumn textarea,
-.rightColumn select {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
 /* Stilizare pentru bara de căutare și sugestii în modalul de ștergere */
 .searchBar {
   position: relative;
@@ -140,4 +117,23 @@
 }
 .suggestions li:hover {
   background: #f0f0f0;
+}
+.confirmationContainer {
+  position: absolute;
+  bottom: 50px;
+  right: 50%;
+  transform: translate(50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-width: 500px;
+  font-weight: bold;
+  font-size: 20px;
+}
+.buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
 }
