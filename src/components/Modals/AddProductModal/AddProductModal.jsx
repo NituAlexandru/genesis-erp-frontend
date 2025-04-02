@@ -201,7 +201,6 @@ export default function AddProductModal({ onClose }) {
             {/* Coloana stângă: imagine + descriere */}
             <div className={styles.leftColumn}>
               <div className={styles.imageUpload}>
-                <label>Imagine Produs:</label>
                 <input type="file" multiple onChange={handleImageChange} />
               </div>
               <div className={styles.descriptionPreview}>

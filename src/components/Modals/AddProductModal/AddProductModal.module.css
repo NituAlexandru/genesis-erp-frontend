@@ -15,11 +15,13 @@
 .modalContent {
   background: #fff;
   padding: 20px;
-  width: 60vw;
+  width: 65vw;
   border-radius: 6px;
   position: relative;
 }
-
+.modalContent h2 {
+  margin-bottom: 10px;
+}
 /* Butonul de închidere (X) în colțul din dreapta sus */
 .closeBtn {
   position: absolute;
@@ -66,7 +68,10 @@
 /* Zona pentru descriere, fixă la 300px lățime, ca și imaginea */
 .leftColumn .descriptionPreview {
   width: 300px;
-  margin: 0;
+  margin: 10px 0 0;
+}
+.description {
+  margin-top: 10px;
 }
 .imageUpload {
   display: flex;

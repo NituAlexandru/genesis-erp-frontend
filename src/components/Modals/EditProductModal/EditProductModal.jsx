@@ -1,27 +1,27 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import styles from "./EditProductModal.module.css";
 
 export default function EditProductModal({ product, onClose }) {
   const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-  // If a product is provided, skip the search step.
+  // Dacă se primește un produs, se sare peste pasul de căutare.
   const [selectedProduct, setSelectedProduct] = useState(product || null);
   const [mounted, setMounted] = useState(false);
   const [images, setImages] = useState([]);
 
-  // For product search (if none selected)
+  // Pentru căutarea produselor (dacă nu este selectat niciunul)
   const [searchProdQuery, setSearchProdQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
-  // Complete lists for category and supplier dropdowns.
+  // Liste complete pentru dropdown-urile de categorie și furnizor.
   const [allCategories, setAllCategories] = useState([]);
   const [allSuppliers, setAllSuppliers] = useState([]);
 
-  // State for category dropdown.
+  // State pentru dropdown-ul de categorie.
   const [categorySearch, setCategorySearch] = useState("");
   const [categorySuggestions, setCategorySuggestions] = useState([]);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
@@ -29,7 +29,7 @@ export default function EditProductModal({ product, onClose }) {
     product?.category || { _id: "", name: "" }
   );
 
-  // State for supplier dropdown.
+  // State pentru dropdown-ul de furnizor.
   const [supplierSearch, setSupplierSearch] = useState("");
   const [supplierSuggestions, setSupplierSuggestions] = useState([]);
   const [showSupplierDropdown, setShowSupplierDropdown] = useState(false);
@@ -37,7 +37,7 @@ export default function EditProductModal({ product, onClose }) {
     product?.mainSupplier || { _id: "", name: "" }
   );
 
-  // Form data state – same structure as in AddProductModal.
+  // State pentru datele formularului – aceeași structură ca în AddProductModal.
   const [formData, setFormData] = useState(
     selectedProduct
       ? {
@@ -79,7 +79,10 @@ export default function EditProductModal({ product, onClose }) {
         }
   );
 
-  // Load categories and suppliers on mount.
+  // Ref pentru inputul de tip file.
+  const fileInputRef = useRef(null);
+
+  // Încarcă categoriile și furnizorii la montare.
   useEffect(() => {
     axios
       .get(`${BASE_URL}/api/categories`)
@@ -92,7 +95,7 @@ export default function EditProductModal({ product, onClose }) {
       .catch((err) => console.error(err));
   }, [BASE_URL]);
 
-  // Product search (if no product is selected).
+  // Căutarea produselor (dacă niciun produs nu este selectat).
   useEffect(() => {
     if (!selectedProduct && searchProdQuery.length > 2) {
       axios
@@ -104,7 +107,7 @@ export default function EditProductModal({ product, onClose }) {
     }
   }, [searchProdQuery, selectedProduct, BASE_URL]);
 
-  // Filter for category.
+  // Filtrare pentru categorie.
   useEffect(() => {
     if (!showCategoryDropdown) return;
     if (categorySearch.length < 1) {
@@ -117,7 +120,7 @@ export default function EditProductModal({ product, onClose }) {
     }
   }, [categorySearch, allCategories, showCategoryDropdown]);
 
-  // Filter for supplier.
+  // Filtrare pentru furnizor.
   useEffect(() => {
     if (!showSupplierDropdown) return;
     if (supplierSearch.length < 1) {
@@ -130,7 +133,7 @@ export default function EditProductModal({ product, onClose }) {
     }
   }, [supplierSearch, allSuppliers, showSupplierDropdown]);
 
-  // Synchronize local states if selectedProduct changes.
+  // Sincronizează stările locale când se modifică selectedProduct.
   useEffect(() => {
     if (selectedProduct) {
       setFormData((prev) => ({
@@ -178,7 +181,7 @@ export default function EditProductModal({ product, onClose }) {
 
   if (!mounted) return null;
 
-  // Handler for form input changes.
+  // Handler pentru schimbările de input în formular.
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name.includes(".")) {
@@ -192,11 +195,12 @@ export default function EditProductModal({ product, onClose }) {
     }
   };
 
+  // Handler pentru schimbarea imaginilor.
   const handleImageChange = (e) => {
     setImages([...e.target.files]);
   };
 
-  // Modified handleSubmit: after update, re-fetch the updated product.
+  // Handler-ul pentru submit: după update, se reîncarcă produsul actualizat.
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!selectedProduct) return;
@@ -234,18 +238,18 @@ export default function EditProductModal({ product, onClose }) {
     axios
       .put(`${BASE_URL}/api/products/${selectedProduct._id}`, data)
       .then(() => {
-        // After a successful update, re-fetch the updated product.
+        // După un update reușit, se reîncarcă produsul actualizat.
         return axios.get(`${BASE_URL}/api/products/${selectedProduct._id}`);
       })
       .then((res) => {
         setSelectedProduct(res.data);
-        // Close the modal; the parent will call refetchProducts to update the list.
+        // Se închide modalul; componenta părinte se ocupă de refetchProducts pentru actualizare.
         onClose();
       })
       .catch((err) => console.error(err));
   };
 
-  // Handlers for category and supplier selection.
+  // Handlers pentru selecția categoriei și a furnizorului.
   const handleCategorySelect = (cat) => {
     setSelectedCategory(cat);
     setCategorySearch(cat.name);
@@ -293,16 +297,33 @@ export default function EditProductModal({ product, onClose }) {
         {selectedProduct && (
           <form onSubmit={handleSubmit}>
             <div className={styles.columns}>
-              {/* Left column: image + description */}
+              {/* Coloană stângă: imagine + descriere */}
               <div className={styles.leftColumn}>
-                <div className={styles.imageUpload}>
-                  <input type="file" multiple onChange={handleImageChange} />
-                  {selectedProduct?.image && (
+                <div
+                  className={styles.imageContainer}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <input
+                    type="file"
+                    multiple
+                    ref={fileInputRef}
+                    onChange={handleImageChange}
+                    style={{ display: "none" }}
+                  />
+                  {images.length > 0 ? (
+                    <img
+                      src={URL.createObjectURL(images[0])}
+                      alt="New Product Preview"
+                      className={styles.imagePreview}
+                    />
+                  ) : selectedProduct?.image ? (
                     <img
                       src={selectedProduct.image}
                       alt={selectedProduct.name || "Produs"}
                       className={styles.imagePreview}
                     />
+                  ) : (
+                    <span>Click to upload image</span>
                   )}
                 </div>
                 <div className={styles.descriptionPreview}>
@@ -315,7 +336,7 @@ export default function EditProductModal({ product, onClose }) {
                 </div>
               </div>
 
-              {/* Right column: form fields */}
+              {/* Coloană dreaptă: câmpuri formular */}
               <div className={styles.rightColumn}>
                 <div>
                   <label>Nume:</label>
@@ -335,7 +356,7 @@ export default function EditProductModal({ product, onClose }) {
                   />
                 </div>
 
-                {/* Category dropdown */}
+                {/* Dropdown categorie */}
                 <div className={styles.fieldWithDropdown}>
                   <label>Categorie:</label>
                   <div className={styles.inputRow}>
@@ -377,7 +398,7 @@ export default function EditProductModal({ product, onClose }) {
                   )}
                 </div>
 
-                {/* Supplier dropdown */}
+                {/* Dropdown furnizor */}
                 <div className={styles.fieldWithDropdown}>
                   <label>Furnizor:</label>
                   <div className={styles.inputRow}>
@@ -483,7 +504,7 @@ export default function EditProductModal({ product, onClose }) {
                   />
                 </div>
 
-                {/* Packaging fields */}
+                {/* Câmpuri pentru ambalare */}
                 <div>
                   <label>Nr. produse în pachet:</label>
                   <input
