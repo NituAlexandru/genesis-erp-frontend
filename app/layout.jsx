@@ -6,6 +6,7 @@ import NavBar from "@/components/Navbar/Navbar";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import Loader from "@/components/Loader/Loader";
 import styles from "./AppLayout.module.css";
+import NotiflixInit from "@/components/NotiflixInit";
 
 export const metadata = {
   title: "Genesis ERP",
@@ -16,6 +17,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ro">
       <body>
+        <NotiflixInit />
         <AuthProvider>
           <AuthRehydrator>
             <div className={styles.container}>
