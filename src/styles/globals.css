@@ -25,6 +25,7 @@ h6 {
   --brand-gray: #666666;
 }
 
+html,
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
