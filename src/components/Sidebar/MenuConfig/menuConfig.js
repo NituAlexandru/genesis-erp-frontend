@@ -1,41 +1,82 @@
 const menuConfig = [
+  // --- Secțiunea Admin ---
+  {
+    title: "Admin",
+    subItems: [
+      {
+        title: "Statistici Generale",
+        path: "/admin/dashboard",
+        subItems: [],
+      },
+      {
+        title: "Rapoarte",
+        path: "/admin/reports",
+        subItems: [
+          { title: "Vânzări", path: "/admin/reports/sales" },
+          { title: "Încasări", path: "/admin/reports/collections" },
+          { title: "Profit", path: "/admin/reports/profit" },
+          { title: "Cheltuieli", path: "/admin/reports/expenses" },
+          { title: "Agenți Vânzare", path: "/admin/reports/sales-agents" },
+          { title: "Produse", path: "/admin/reports/products" },
+          { title: "Clienți", path: "/admin/reports/clients" },
+          { title: "Magazin Online", path: "/admin/reports/online-store" },
+        ],
+      },
+      {
+        title: "Management Produse",
+        path: "/admin/manage-products",
+        subItems: [],
+      },
+      {
+        title: "Management Utilizatori",
+        path: "/admin/users",
+        subItems: [],
+      },
+      {
+        title: "Management Flota",
+        path: "/admin/users",
+        subItems: [],
+      },
+      {
+        title: "Seteaza Marja Profit",
+        path: "/admin/manage-markup",
+        subItems: [],
+      },
+      {
+        title: "Setări Generale",
+        path: "/admin/settings",
+        subItems: [],
+      },
+    ],
+  },
+  // -------------- restul sectiunilor
   {
     title: "Dashboard",
     path: "/dashboard",
-    subItems: [], // Pagina principală, fără submeniuri
+    subItems: [],
+  },
+  {
+    title: "Notificări",
+    path: "/notifications",
+    subItems: [],
   },
   {
     title: "Clienți",
     path: "/clients",
-    subItems: [], // Gestionarea clienților (persoane fizice și juridice)
+    subItems: [],
   },
   {
     title: "Furnizori",
     path: "/suppliers",
-    subItems: [], // Gestionarea furnizorilor
-  },
-  {
-    title: "Depozit",
-    path: "/warehouse",
-    subItems: [
-      { title: "Stocuri", path: "/warehouse/stocks" },
-      { title: "Comenzi în așteptare", path: "/warehouse/pending-orders" },
-      { title: "Produse în tranzit", path: "/warehouse/in-transit" },
-    ],
+    subItems: [],
   },
   {
     title: "Catalog Produse",
     path: "/products",
-    subItems: [], // Catalog detaliat de produse
+    subItems: [],
   },
-  //   {
-  //     title: "Comenzi Online",
-  //     path: "/online-orders",
-  //     subItems: [], // Gestionarea comenzilor online
-  //   },
   {
     title: "Documente",
-    path: "/documents",
     subItems: [
       { title: "Receptie", path: "/documents/reception" },
       { title: "Comandă", path: "/documents/order" },
@@ -44,27 +85,19 @@ const menuConfig = [
     ],
   },
   {
-    title: "Rapoarte",
-    path: "/reports",
-    subItems: [
-      { title: "Vânzări", path: "/reports/sales" },
-      { title: "Încasări", path: "/reports/collections" },
-      { title: "Profit", path: "/reports/profit" },
-    ],
+    title: "Gestiune Stocuri",
+    path: "/warehouse/stocks-overview",
+    subItems: [],
+  },
+
+  {
+    title: "Comenzi Online",
+    path: "/online-orders",
+    subItems: [],
   },
   {
-    title: "Notificări",
-    path: "/notifications",
-    subItems: [], // Notificări și remindere în timp real (WebSocket/Sochet.io)
-  },
-  {
-    title: "Setări",
-    path: "/settings",
-    subItems: [], // Configurări generale și preferințe
-  },
-  {
-    title: "Admin",
-    path: "/admin",
+    title: "Comenzi Preferențiale",
+    path: "/Preferential-orders",
     subItems: [],
   },
 ];

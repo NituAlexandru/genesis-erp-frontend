@@ -1,5 +1,5 @@
 .sidebar {
-  width: 250px; /* Lățimea când e deschis */
+  width: 250px;
   background-color: #f5f5f5;
   padding: 1rem;
   overflow: visible;
@@ -43,9 +43,41 @@
 }
 
 .menuItemsContainer {
-  padding-top: 40px;
-}
+  margin-top: 50px;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease, visibility 0s linear 0s;
+  overflow-y: auto;
+  height: 80%;
+  /* --- Stiluri pentru Scrollbar --- */
 
+  /* Pentru Firefox */
+  scrollbar-width: thin; /* Face scrollbar-ul mai subțire */
+  scrollbar-color: #e7e6e6 transparent; /* Culoare thumb (bară) și culoare track (fundal) */
+  /* Pentru WebKit (Chrome, Safari, Edge, etc.) */
+  &::-webkit-scrollbar {
+    width: 2px; /* Lățimea scrollbar-ului */
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent; /* Fundalul track-ului transparent */
+    border-radius: 3px; /* Colțuri rotunjite (opțional) */
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #ffffff; /* Culoarea barei (thumb) */
+    border-radius: 3px; /* Colțuri rotunjite */
+    border: 1px solid transparent; /* Creează un mic spațiu în jurul barei */
+    background-clip: content-box; /* Face ca border să funcționeze ca padding */
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #888888; /* Culoare bară la hover */
+  }
+}
+.sidebarClosed .menuItemsContainer {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.1s ease, visibility 0s linear 0.1s;
+}
 .menuItem {
   margin-bottom: 1rem;
   white-space: nowrap;

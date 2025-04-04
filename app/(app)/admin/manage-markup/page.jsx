@@ -8,9 +8,8 @@ import EditUserModal from "@/components/Modals/EditUserModal";
 import DeleteUserModal from "@/components/Modals/DeleteUserModal";
 import Loader from "@/components/Loader/Loader";
 import Notiflix from "notiflix";
-import AdminVatSettings from "@/components/AdminComponents/AdminVatSettings";
 import ProductMarkupTable from "@/components/AdminComponents/ProductMarkupTable";
-import styles from "./AdminPage.module.css";
+import styles from "./ManageProducts.module.css";
 
 export default function AdminPage() {
   const { user, isAuthenticated, loading } = useAuth();
@@ -35,11 +34,8 @@ export default function AdminPage() {
     return null;
   }
 
-  const handleOpenCreateModal = () => setCreateModalOpen(true);
   const handleCloseCreateModal = () => setCreateModalOpen(false);
-  const handleOpenEditModal = () => setEditModalOpen(true);
   const handleCloseEditModal = () => setEditModalOpen(false);
-  const handleOpenDeleteModal = () => setDeleteModalOpen(true);
   const handleCloseDeleteModal = () => setDeleteModalOpen(false);
 
   const handleModalSuccess = (message) => {
@@ -48,22 +44,7 @@ export default function AdminPage() {
   //
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Panou Admin</h2>
-      <p className={styles.description}>Gestionați utilizatorii și rolurile.</p>
-      <div className={styles.buttonGroup}>
-        <button onClick={handleOpenCreateModal} className={styles.createButton}>
-          Crează Utilizator
-        </button>
-        <button onClick={handleOpenEditModal} className={styles.editButton}>
-          Modifică Utilizator
-        </button>
-        <button onClick={handleOpenDeleteModal} className={styles.deleteButton}>
-          Șterge Utilizator
-        </button>
-      </div>
-
-      {/* Secțiune pentru setările TVA (global) */}
-      <AdminVatSettings />
+      <h2 className={styles.title}>Marja Profit Produse</h2>
 
       {/* Secțiune pentru markup-uri pe produse */}
       <ProductMarkupTable />

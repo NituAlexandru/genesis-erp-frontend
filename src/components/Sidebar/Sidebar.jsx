@@ -1,79 +1,78 @@
 "use client";
 
-import React from "react";
+import React from "react"; 
 import { useRouter } from "next/navigation";
 import menuConfig from "@/components/Sidebar/MenuConfig/menuConfig";
 import styles from "./Sidebar.module.css";
 
-// Primește isOpen și toggleSidebar ca props
-export default function Sidebar({ isOpen, toggleSidebar }) {
+// --- Definirea MenuItemComponent aici sau import ---
+function MenuItemComponent({ item, level = 0, isSidebarOpen }) {
   const router = useRouter();
-  // Starea pentru submeniuri - o păstrăm locală în Sidebar
-  const [openMenus, setOpenMenus] = React.useState({});
+  const [isSubMenuOpen, setIsSubMenuOpen] = React.useState(false);
+  const hasSubItems = item.subItems && item.subItems.length > 0;
 
-  const toggleLocalMenu = (index) => {
-    setOpenMenus((prev) => ({
-      ...prev,
-      [index]: !prev[index],
-    }));
-  };
-
-  const handleNavigation = (path, hasSubItems, index) => {
+  const handleClick = () => {
     if (hasSubItems) {
-      toggleLocalMenu(index);
-    } else if (path) {
-      router.push(path);
+      setIsSubMenuOpen((prev) => !prev);
+    } else if (item.path) {
+      router.push(item.path);
     }
   };
 
   return (
-    // Aplicăm clasa 'sidebarClosed' condiționat
+    // Stilul pt indentare și containerul menuItem
+    <div
+      className={styles.menuItem}
+      style={{ marginLeft: `${level * 0.1}rem` }}
+    >
+      <div className={styles.menuTitle} onClick={handleClick}>
+        <span>{item.title}</span>
+        {hasSubItems && (
+          <span className={styles.arrow}>{isSubMenuOpen ? "▲" : "▼"}</span>
+        )}
+      </div>
+      {/* Randare recursivă */}
+      {hasSubItems && isSubMenuOpen && (
+        <div className={styles.subMenu}>
+          {" "}
+          {/* Clasa subMenu poate fi scoasă dacă folosim doar paddingLeft */}
+          {item.subItems.map((subItem, subIndex) => (
+            <MenuItemComponent
+              key={subIndex}
+              item={subItem}
+              level={level + 1}
+              isSidebarOpen={isSidebarOpen} // Pasăm starea sidebarului principal
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+// Componenta Sidebar principală - primește isOpen și toggleSidebar
+export default function Sidebar({ isOpen, toggleSidebar }) {
+  return (
     <aside
       className={`${styles.sidebar} ${!isOpen ? styles.sidebarClosed : ""}`}
     >
-      {/* Butonul de Toggle */}
-      <button onClick={toggleSidebar} className={styles.toggleButton}>
-        {isOpen ? "◀" : "▶"} {/* Sau folosește iconițe */}
+      <button
+        onClick={toggleSidebar}
+        className={styles.toggleButton}
+        title={isOpen ? "Restrânge" : "Extinde"}
+      >
+        {isOpen ? "◀" : "▶"}
       </button>
-
+      {/* Folosim containerul pentru a gestiona vizibilitatea globală */}
       <div className={styles.menuItemsContainer}>
-        {menuConfig.map((item, index) => {
-          const hasSubItems = item.subItems && item.subItems.length > 0;
-          const isSubMenuOpen = !!openMenus[index]; // Verificăm dacă submeniul e deschis
-
-          return (
-            <div
-              key={index}
-              className={styles.menuItem}
-              style={{ display: isOpen ? "block" : "none" }}
-            >
-              <div
-                className={styles.menuTitle}
-                onClick={() => handleNavigation(item.path, hasSubItems, index)}
-              >
-                {item.title}
-                {hasSubItems && (
-                  <span className={styles.arrow}>
-                    {isSubMenuOpen ? "▲" : "▼"}
-                  </span>
-                )}
-              </div>
-              {hasSubItems && isSubMenuOpen && (
-                <div className={styles.subMenu}>
-                  {item.subItems.map((subItem, subIndex) => (
-                    <div
-                      key={subIndex}
-                      className={styles.subMenuItem}
-                      onClick={() => router.push(subItem.path)}
-                    >
-                      {subItem.title}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
+        {/* Mapăm configul și randăm MenuItemComponent pentru fiecare item de nivel 0 */}
+        {menuConfig.map((item, index) => (
+          <MenuItemComponent
+            key={index}
+            item={item}
+            level={0}
+            isSidebarOpen={isOpen} // Pasăm starea sidebarului
+          />
+        ))}
       </div>
     </aside>
   );

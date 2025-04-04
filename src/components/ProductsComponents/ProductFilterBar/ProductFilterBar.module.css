@@ -15,19 +15,6 @@
   padding: 0.5rem;
   cursor: pointer;
 }
-.resetButton {
-  padding: 0.5rem 1rem;
-  border: none;
-  background-color: #e0e0e0;
-  color: #333;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
-}
-
-.resetButton:hover {
-  background-color: #ccc;
-}
 
 .searchBar {
   min-width: 500px;

@@ -17,8 +17,6 @@ export default function NotiflixInit() {
           Notiflix.Notify &&
           Notiflix.Loading
         ) {
-          console.log("Attempting to initialize Notiflix modules...");
-
           // --- Inițializare Modul Confirm ---
           if (typeof Notiflix.Confirm.init === "function") {
             Notiflix.Confirm.init({
@@ -33,7 +31,6 @@ export default function NotiflixInit() {
               warning: { background: "#f59e0b", textColor: "#ffffff" },
               info: { background: "#3b82f6", textColor: "#ffffff" },
             });
-            console.log("Notiflix Confirm initialized.");
           } else {
             console.error("Notiflix.Confirm.init is not a function.");
           }
@@ -43,7 +40,6 @@ export default function NotiflixInit() {
             Notiflix.Notify.init({
               // Doar opțiunile specifice pentru Notify
             });
-            console.log("Notiflix Notify initialized.");
           } else {
             console.error("Notiflix.Notify.init is not a function.");
           }
@@ -57,7 +53,6 @@ export default function NotiflixInit() {
               messageColor: "#1e40af",
               backgroundColor: "rgba(255, 255, 255, 0.8)",
             });
-            console.log("Notiflix Loading initialized.");
           } else {
             console.error("Notiflix.Loading.init is not a function.");
           }

@@ -95,7 +95,6 @@ export default function ProductMarkupTable() {
 
   return (
     <div>
-      <h3>Setări Marja Profit Produse</h3>
       {/* Componenta de filtrare cu butonul de reset */}
       <ProductMarkupFilter
         searchTerm={searchTerm}

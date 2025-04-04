@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           {/* Loader-ul din AuthRehydrator va fi afișat dacă e necesar */}
           <AuthRehydrator>
-            <Suspense fallback={<Loader />}>{children}</Suspense>
+            <Suspense>{children}</Suspense>
           </AuthRehydrator>
         </AuthProvider>
 
